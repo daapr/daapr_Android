@@ -1,0 +1,71 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+	xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.myfirstapp.MainActivity$PlaceholderFragment"
+    android:isScrollContainer="true">
+    
+    
+<RelativeLayout 
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin" >
+
+	    <RelativeLayout
+	        android:id="@+id/card"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerHorizontal="true"
+	        android:layout_centerVertical="true"
+	        android:background="@color/card_color" >
+
+	        <TextView
+	            android:id="@+id/title"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignLeft="@+id/card_image"
+	            android:layout_below="@+id/card_image"
+	            android:text="@string/card_title"
+	            android:color="@color/daapr_blue" />
+
+	        <TextView
+	            android:id="@+id/source"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignLeft="@+id/title"
+	            android:layout_below="@+id/title"
+	            android:text="@string/card_source" />
+
+	        <TextView
+	            android:id="@+id/user"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignLeft="@+id/source"
+	            android:layout_below="@+id/source"
+	            android:text="@string/user" />
+
+	        <TextView
+	            android:id="@+id/time"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignRight="@+id/card_image"
+	            android:layout_below="@+id/source"
+	            android:text="@string/time" />
+
+	        <ImageView
+	            android:id="@+id/card_image"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentLeft="true"
+	            android:layout_alignParentTop="true"
+	            android:contentDescription="@string/card1"
+	            android:src="@drawable/charlie" />
+	    </RelativeLayout>
+
+	</RelativeLayout>
+</ScrollView>

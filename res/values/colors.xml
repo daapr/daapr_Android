@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="card_color">#F0F0F0</color>
+    <color name="daapr_gray">#B3B3B3</color>
+    <color name="daapr_blue">#53B6B4</color>
+    <color name="source_gray">#777777</color>
+</resources>

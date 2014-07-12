@@ -14,12 +14,40 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.myfirstapp.MainActivity"
+            android:name="com.example.myfirstapp.SignIn"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name="com.example.myfirstapp.Feed"
+            android:label="@string/title_feed" 
+            android:parentActivityName="com.example.myfirstapp.SignIn"
+            >
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.myfirstapp.SignIn" />
+            <intent-filter>
+                <action android:name="android.intent.action.FEED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name="com.example.myfirstapp.Profile"
+            android:label="@string/title_feed" 
+            android:parentActivityName="com.example.myfirstapp.Feed"
+            >
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.myfirstapp.Feed" />
+            <intent-filter>
+                <action android:name="android.intent.action.PROFILE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
     </application>

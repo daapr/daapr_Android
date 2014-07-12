@@ -1,26 +1,26 @@
 package com.example.myfirstapp;
 
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.os.Build;
 
 
-public class MainActivity extends ActionBarActivity {
+
+public class Feed extends ActionBarActivity {
 
 	// Global Variables
 	int numTextViews = 2;
@@ -32,7 +32,11 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.feed);
+        
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        
         
         // Background Color
         RelativeLayout card_layout = (RelativeLayout) findViewById(R.id.card);
@@ -177,37 +181,70 @@ public class MainActivity extends ActionBarActivity {
 //                    .add(R.id.container, new PlaceholderFragment())
 //                    .commit();
 //        }
-//        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-//        	    xmlns:tools="http://schemas.android.com/tools"
-//        	    android:id="@+id/container"
-//        	    android:layout_width="match_parent"
-//        	    android:layout_height="match_parent"
-//        	    tools:context="com.example.myfirstapp.MainActivity"
-//        	    tools:ignore="MergeRootFrame" />
+
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+    	// Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        // Handle presses on the action bar items
+    	System.out.println("In onOptionsItemSelected");
+        switch (item.getItemId()) {
+            case R.id.action_profile:
+                openProfile();
+                return true;
+            case R.id.action_notifications:
+                openNotifications();
+                return true;
+            case R.id.action_discover_users:
+            	openUsers();
+            	return true;
+            case R.id.action_settings:
+            	openSettings();
+            	return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
-    /**
+    /** Called when the user clicks the Settings action item */
+    private void openSettings() {
+		// TODO Auto-generated method stub
+		
+	}
+
+    /** Called when the user clicks the Discover Users action item */
+	private void openUsers() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/** Called when the user clicks the Notifications action item */
+    private void openNotifications() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	/** Called when the user clicks the Profile action item */
+    private void openProfile() {
+		// TODO Auto-generated method stub
+    	System.out.println("In openProfile()");
+    	Intent profile = new Intent(this, Profile.class);
+		startActivity(profile);
+	}
+
+	/**
      * A placeholder fragment containing a simple view.
      */
     public static class PlaceholderFragment extends Fragment {

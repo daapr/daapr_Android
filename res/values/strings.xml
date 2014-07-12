@@ -5,13 +5,26 @@
     <string name="action_settings">Settings</string>
     <string name="button_send">Send</string>
     <string name="title_activity_main">MainActivity</string>
-	<string name="edit_message">Enter a message :)</string>
-	<string name="card1">Charlie Test</string>
-	<string name="card2">McKayla Maroney</string>
-	<string name="card3">Jordyn Wieber</string>
-	<string name="card_title">Sample Title: Gymnastics</string>
+    <string name="edit_message">Enter a message :)</string>
+    <string name="card1">Charlie Test</string>
+    <string name="card2">McKayla Maroney</string>
+    <string name="card3">Jordyn Wieber</string>
+    <string name="card_title">Sample Title: Gymnastics</string>
     <string name="card_source">Source: Universal Sports</string>
     <string name="test_text">Test for size!</string>
     <string name="user">Alice Meng</string>
+    <string name="user_first_name">Alice</string>
     <string name="time">May 2, 2014</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="signin">Sign in</string>
+    <string name="title_feed">daapr</string>
+    <string name="notifications">Notifications</string>
+    <string name="add_post">Add a post</string>
+    <string name="discover_users">Discover users</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+
+    
+
 </resources>

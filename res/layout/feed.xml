@@ -63,7 +63,7 @@
 	            android:layout_height="wrap_content"
 	            android:layout_alignParentLeft="true"
 	            android:layout_alignParentTop="true"
-	            android:contentDescription="@string/card1"
+	            android:contentDescription="@string/test_card_name"
 	            android:src="@drawable/charlie" />
 	    </RelativeLayout>
 

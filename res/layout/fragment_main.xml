@@ -18,7 +18,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="37dp"
         android:src="@drawable/charlie" 
-        android:contentDescription="@string/card1" />
+        android:contentDescription="@string/test_card_name" />
 
     <TextView
         android:id="@+id/textView1"

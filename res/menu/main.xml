@@ -4,12 +4,16 @@
     tools:context="com.example.myfirstapp.MainActivity" >
 
     <item android:id="@+id/action_profile"
-          android:title="Alice"
+          android:title="@string/user_first_name"
           app:showAsAction="always" />
     <item android:id="@+id/action_notifications"
           android:title="@string/notifications"
           app:showAsAction="always"
           android:icon="@drawable/notification" />
+    <item android:id="@+id/action_add_post"
+          android:title="@string/add_post"
+          app:showAsAction="always"
+          android:icon="@drawable/addition" />
     <item android:id="@+id/action_discover_users"
           android:title="@string/discover_users"
           app:showAsAction="ifRoom"

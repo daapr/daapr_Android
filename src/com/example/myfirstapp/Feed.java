@@ -1,5 +1,11 @@
 package com.example.myfirstapp;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.message.BasicNameValuePair;
+
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -34,8 +40,11 @@ public class Feed extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.feed);
         
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        
+
+        
+//        ActionBar actionBar = getSupportActionBar();
+//        actionBar.setDisplayHomeAsUpEnabled(true);
         
         
         // Background Color
@@ -63,7 +72,13 @@ public class Feed extends ActionBarActivity {
         title.setSpan(new RelativeSizeSpan(1f), 0, title.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         tv1.setText(title);
         
-        // Source text 
+        // Source text
+        // Use below example to test postData()
+//        List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
+//        urlParams.add(new BasicNameValuePair("username", "12345"));
+//    	  urlParams.add(new BasicNameValuePair("password", "Hi"));
+//        HttpResponse url = HTTP.postData("http://0.0.0.0:3000", urlParams);
+        
         TextView tv2 = (TextView) findViewById(R.id.source);
         Spannable source = new SpannableString(tv2.getText());
         source.setSpan(new RelativeSizeSpan(0.8f), 0, source.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -184,10 +199,8 @@ public class Feed extends ActionBarActivity {
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
     	// Inflate the menu items for use in the action bar
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
@@ -197,67 +210,74 @@ public class Feed extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
-    	System.out.println("In onOptionsItemSelected");
-        switch (item.getItemId()) {
-            case R.id.action_profile:
-                openProfile();
-                return true;
-            case R.id.action_notifications:
-                openNotifications();
-                return true;
-            case R.id.action_discover_users:
-            	openUsers();
-            	return true;
-            case R.id.action_settings:
-            	openSettings();
-            	return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    	switch (item.getItemId()) {
+		    case R.id.action_profile:
+		        openProfile();
+		        return true;
+		    case R.id.action_notifications:
+		        openNotifications();
+		        return true;
+		    case R.id.action_add_post:
+		    	openAddPost();
+		    	return true;
+		    case R.id.action_discover_users:
+		    	openUsers();
+		    	return true;
+		    case R.id.action_settings:
+		    	openSettings();
+		    	return true;
+		    default:
+		        return super.onOptionsItemSelected(item);
+    	}
     }
-
-    /** Called when the user clicks the Settings action item */
+    	 
+	/** Called when the user clicks the Settings action item */
     private void openSettings() {
-		// TODO Auto-generated method stub
 		
 	}
 
     /** Called when the user clicks the Discover Users action item */
 	private void openUsers() {
-		// TODO Auto-generated method stub
 		
 	}
 
 
 	/** Called when the user clicks the Notifications action item */
     private void openNotifications() {
-		// TODO Auto-generated method stub
+		Intent notes = new Intent(this, Notifications.class);
+		startActivity(notes);	
+	}
+    
+    /** Called when the user clicks the "Add a Post" action item */
+	private void openAddPost() {
 		
 	}
 
-
 	/** Called when the user clicks the Profile action item */
     private void openProfile() {
-		// TODO Auto-generated method stub
-    	System.out.println("In openProfile()");
     	Intent profile = new Intent(this, Profile.class);
 		startActivity(profile);
 	}
 
-	/**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-    }
+//	/**
+//     * A placeholder fragment containing a simple view.
+//     */
+//    public static class PlaceholderFragment extends Fragment {
+//
+//        public PlaceholderFragment() {
+//        }
+//
+//        @Override
+//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                Bundle savedInstanceState) {
+//            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+//            return rootView;
+//        }
+//    }
+    
+//    @Override
+//	protected void onPause() {
+//		super.onPause();
+//	}
 
 }

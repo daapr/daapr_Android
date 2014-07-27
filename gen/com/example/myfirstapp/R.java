@@ -994,6 +994,7 @@ containing a value of this type.
         public static final int wieber=0x7f02005d;
     }
     public static final class id {
+        public static final int action_add_post=0x7f05004f;
         public static final int action_bar=0x7f05001c;
         public static final int action_bar_activity_content=0x7f050015;
         public static final int action_bar_container=0x7f05001b;
@@ -1006,12 +1007,11 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050016;
         public static final int action_menu_presenter=0x7f050017;
         public static final int action_mode_close_button=0x7f050024;
-        public static final int action_notifications=0x7f05004f;
-        public static final int action_profile=0x7f05004e;
-        public static final int action_settings=0x7f05004d;
+        public static final int action_notifications=0x7f05004e;
+        public static final int action_profile=0x7f05004d;
+        public static final int action_settings=0x7f050051;
         public static final int activity_chooser_view_content=0x7f050025;
         public static final int always=0x7f05000b;
-        public static final int back_button=0x7f050045;
         public static final int beginning=0x7f050011;
         public static final int card=0x7f05003d;
         public static final int card_image=0x7f05003e;
@@ -1041,6 +1041,7 @@ containing a value of this type.
         public static final int never=0x7f050009;
         public static final int none=0x7f050010;
         public static final int normal=0x7f050000;
+        public static final int notifications_view=0x7f050045;
         public static final int password=0x7f05004b;
         public static final int posts=0x7f050047;
         public static final int progress_circular=0x7f050018;
@@ -1126,15 +1127,16 @@ containing a value of this type.
         public static final int abc_search_dropdown_item_icons_2line=0x7f030015;
         public static final int abc_search_view=0x7f030016;
         public static final int feed=0x7f030017;
-        public static final int fragment_main=0x7f030018;
-        public static final int nav_bar=0x7f030019;
-        public static final int profile=0x7f03001a;
-        public static final int signin=0x7f03001b;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001c;
+        public static final int followers=0x7f030018;
+        public static final int following=0x7f030019;
+        public static final int fragment_main=0x7f03001a;
+        public static final int notifications=0x7f03001b;
+        public static final int profile=0x7f03001c;
+        public static final int signin=0x7f03001d;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001e;
     }
     public static final class menu {
-        public static final int feed=0x7f0c0000;
-        public static final int main=0x7f0c0001;
+        public static final int main=0x7f0c0000;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1177,29 +1179,23 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f0a000b;
-        public static final int action_settings=0x7f0a000e;
-        public static final int add_post=0x7f0a0020;
+        public static final int action_settings=0x7f0a001a;
+        public static final int add_post=0x7f0a0018;
         public static final int app_name=0x7f0a000d;
-        public static final int button_send=0x7f0a000f;
-        public static final int card1=0x7f0a0012;
-        public static final int card2=0x7f0a0013;
-        public static final int card3=0x7f0a0014;
-        public static final int card_source=0x7f0a0016;
-        public static final int card_title=0x7f0a0015;
-        public static final int discover_users=0x7f0a0021;
-        public static final int edit_message=0x7f0a0011;
-        public static final int email=0x7f0a001b;
-        public static final int followers=0x7f0a0022;
-        public static final int following=0x7f0a0023;
-        public static final int notifications=0x7f0a001f;
-        public static final int password=0x7f0a001c;
-        public static final int signin=0x7f0a001d;
-        public static final int test_text=0x7f0a0017;
-        public static final int time=0x7f0a001a;
-        public static final int title_activity_main=0x7f0a0010;
-        public static final int title_feed=0x7f0a001e;
-        public static final int user=0x7f0a0018;
-        public static final int user_first_name=0x7f0a0019;
+        public static final int card_source=0x7f0a0014;
+        public static final int card_title=0x7f0a0013;
+        public static final int discover_users=0x7f0a0019;
+        public static final int email=0x7f0a000e;
+        public static final int followers=0x7f0a001b;
+        public static final int following=0x7f0a001c;
+        public static final int notifications=0x7f0a0017;
+        public static final int password=0x7f0a000f;
+        public static final int posts=0x7f0a001d;
+        public static final int signin=0x7f0a0010;
+        public static final int test_card_name=0x7f0a0016;
+        public static final int time=0x7f0a0015;
+        public static final int user=0x7f0a0011;
+        public static final int user_first_name=0x7f0a0012;
     }
     public static final class style {
         /** 

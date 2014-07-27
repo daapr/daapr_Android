@@ -1,6 +1,7 @@
 package com.example.myfirstapp;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -8,25 +9,50 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 public class Profile extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profile);
 		
 		ActionBar actionBar = getSupportActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
+	    
+	    Button btn_followers = (Button) findViewById(R.id.followers);
+		btn_followers.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+			    try {
+					showFollowers(v);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+		    }
+		});
+		Button btn_following = (Button) findViewById(R.id.following);
+		btn_following.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+			    try {
+					showFollowing(v);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+		    }
+		});
 	}
 	
 	public void showFollowers(View v) {
-		
+		Intent followers = new Intent(this, Followers.class);
+		startActivity(followers);
 	}
 	
 	public void showFollowing(View v) {
-		
+		Intent following = new Intent(this, Following.class);
+		startActivity(following);
 	}
 	
 	@Override

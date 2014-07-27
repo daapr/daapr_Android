@@ -21,26 +21,33 @@
         android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_gravity="center"
-	    android:text="0 posts" />
+	    android:text="@string/posts" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/followers"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="showFollowers"
-            android:text="@string/followers" />
-
-        <Button
             android:id="@+id/following"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="40dp"
             android:onClick="showFollowing"
             android:text="@string/following" />
-    </LinearLayout>
+
+        <Button
+            android:id="@+id/followers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="40dp"
+            android:onClick="showFollowers"
+            android:text="@string/followers" />
+
+    </RelativeLayout>
 
 </LinearLayout>

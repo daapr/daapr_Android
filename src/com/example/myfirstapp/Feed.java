@@ -77,7 +77,7 @@ public class Feed extends ActionBarActivity {
 //        List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
 //        urlParams.add(new BasicNameValuePair("username", "12345"));
 //    	  urlParams.add(new BasicNameValuePair("password", "Hi"));
-//        HttpResponse url = HTTP.postData("http://0.0.0.0:3000", urlParams);
+//        HTTP.postData("http://0.0.0.0:3000", urlParams);
         
         TextView tv2 = (TextView) findViewById(R.id.source);
         Spannable source = new SpannableString(tv2.getText());

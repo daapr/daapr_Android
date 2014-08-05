@@ -1,13 +1,20 @@
 package com.example.myfirstapp;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
- 
+
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.http.HttpResponse;
@@ -16,16 +23,20 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.Uri.Builder;
-import android.widget.TextView;
+import android.view.View;
 
 public class HTTP {
 
-	private final String USER_AGENT = "Mozilla/5.0";
+	private final static String USER_AGENT = "Mozilla/5.0";
 	 
 //	public static void main(String[] args) throws Exception {
 // 
@@ -48,15 +59,20 @@ public class HTTP {
 		Uri.Builder builder;
 		builder = new Builder();
 		builder.scheme("http");
-		builder.authority("0.0.0.0:3000");
-		builder.appendPath("turtles").appendPath("types");
-		builder.appendQueryParameter("type", "1").appendQueryParameter("sort", "relevance");
-		//builder.buildUpon().appendPath("turtles").appendPath("types").appendQueryParameter("type", "1").appendQueryParameter("sort", "relevance");
+		builder.authority(path);
+//		builder.authority("0.0.0.0:3000");
+//		builder.appendPath("turtles").appendPath("types");
+//		for (param : params) {
+//			
+//		}
+//		builder.appendQueryParameter("type", "1").appendQueryParameter("sort", "relevance");
+//		builder.buildUpon().appendPath("turtles").appendPath("types").appendQueryParameter("type", "1").appendQueryParameter("sort", "relevance");
 		String myUrl = builder.build().toString();
 		System.out.println(myUrl);
 		return myUrl;
 	}
 
+	// Not currently in use. See example at http://www.mkyong.com/java/how-to-send-http-request-getpost-in-java/.
 	public void sendGet(String url) throws Exception {
 		
 		 
@@ -87,7 +103,8 @@ public class HTTP {
 		System.out.println(response.toString());		
 	}
 	
-	public void sendPost(String url, String urlParams) throws Exception {
+	// See example at http://www.mkyong.com/java/how-to-send-http-request-getpost-in-java/.
+	public static void sendPost(String url, String urlParams) throws Exception {
 		
 		URL obj = new URL(url);
 		HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
@@ -123,8 +140,9 @@ public class HTTP {
 		System.out.println(response.toString());
 	}
 	
-	// Sends an Http POST request given the source path and urlParams
-	public static void postData(String path, List<BasicNameValuePair> urlParams) {
+	// Sends an Http POST request given the source path and urlParams. See example at
+	// http://stackoverflow.com/questions/2938502/sending-post-data-in-android. Uses Apache.
+	public static String postData(String path, List<BasicNameValuePair> urlParams) {
 	    // Create a new HttpClient and Post Header
 	    HttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httppost = new HttpPost(path);
@@ -138,13 +156,53 @@ public class HTTP {
 	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 	        // Execute HTTP Post Request
-	        httpclient.execute(httppost);
-
+	        HttpResponse response = httpclient.execute(httppost);
+	        String responseString = new BasicResponseHandler().handleResponse(response);
+	        System.out.println(responseString);
+	        return responseString;
+	        
 	    } catch (ClientProtocolException e) {
-	    	return;
+	    	return "Client error";
 	    } catch (IOException e) {
-	    	return;
+	    	return "IO error";
 	    }
-	} 
+	}
 
+	// Sends POST request using HttpURLConnection. If setDoOutput(true) is not called,
+	// the request will be GET. See example at
+	// http://developer.android.com/reference/java/net/HttpURLConnection.html.
+	public static void post(URL url) throws IOException {
+		int len = 500;
+		HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+		try {
+			urlConnection.setDoOutput(true);
+			urlConnection.setChunkedStreamingMode(0);
+				
+			OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+//			writeStream(out);
+				
+			InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+			readStream(in, len);
+		} finally {
+			urlConnection.disconnect();
+		}
+	}
+	
+	// This function was needed for post() but I'm not sure what it should be.
+	private static void writeStream(OutputStream out) {
+//		writeBytes(out);
+//		out.flush();
+//		out.close();
+	}
+
+	// Reads an InputStream and converts it to a String.
+	public static String readStream(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+	    Reader reader = null;
+	    reader = new InputStreamReader(stream, "UTF-8");        
+	    char[] buffer = new char[len];
+	    reader.read(buffer);
+	    return new String(buffer);
+	}
+	
+	
 }

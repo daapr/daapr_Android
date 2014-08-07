@@ -12,11 +12,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -26,6 +28,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.client.HttpResponseException;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -33,6 +37,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.Uri.Builder;
 import android.view.View;
+
 
 public class HTTP {
 
@@ -144,26 +149,55 @@ public class HTTP {
 	// http://stackoverflow.com/questions/2938502/sending-post-data-in-android. Uses Apache.
 	public static String postData(String path, List<BasicNameValuePair> urlParams) {
 	    // Create a new HttpClient and Post Header
+		
+		//additional path
+//		String extend = path + "email=dummy1@example.com&password=dummyone";
+//		String extend2 = path + "email=" + encodeURI("dummy1@example.com") + "&password=dummyone";
+		
+		HttpResponse response = null;
 	    HttpClient httpclient = new DefaultHttpClient();
-	    HttpPost httppost = new HttpPost(path);
+	    HttpPost httppost = null;
+	    httppost = new HttpPost(path);
+//		try {
+//			String extend3 = path + "email=" + URLEncoder.encode("dummy1@example.com", "UTF-8")
+//					+ "&password=dummyone";
+//			httppost = new HttpPost(extend3);
+//		} catch (UnsupportedEncodingException e1) {
+//			System.out.println("url encoding didn't work. stack trace:\n");
+//			e1.printStackTrace();
+//		}
+	    
 
 	    try {
-	        // Add your data
-	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+	        // Add the data
+	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 	        for (BasicNameValuePair data : urlParams) {
 	        	nameValuePairs.add(data);
 	        }
-	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	    	System.out.println("url is: " + path);
+	    	HttpEntity entity = new UrlEncodedFormEntity(nameValuePairs, "utf-8");
+	        httppost.setEntity(entity);
+	    	String content = EntityUtils.toString(entity);
+	    	System.out.println("content is: " + content);
 
 	        // Execute HTTP Post Request
-	        HttpResponse response = httpclient.execute(httppost);
+	        response = httpclient.execute(httppost);
+	        
+	        // Convert response to string
+//	        HttpEntity entity_response = response.getEntity();
+//	        String responseString = EntityUtils.toString(entity_response, "UTF-8");
+//	        System.out.println(responseString);
+	        
 	        String responseString = new BasicResponseHandler().handleResponse(response);
 	        System.out.println(responseString);
 	        return responseString;
 	        
 	    } catch (ClientProtocolException e) {
+	    	e.printStackTrace();
+	    	System.out.println("http code is " + response.getStatusLine().toString());
 	    	return "Client error";
 	    } catch (IOException e) {
+	    	e.printStackTrace();
 	    	return "IO error";
 	    }
 	}
@@ -179,7 +213,7 @@ public class HTTP {
 			urlConnection.setChunkedStreamingMode(0);
 				
 			OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-//			writeStream(out);
+			writeStream(out);
 				
 			InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 			readStream(in, len);
@@ -193,10 +227,11 @@ public class HTTP {
 //		writeBytes(out);
 //		out.flush();
 //		out.close();
+		return;
 	}
 
 	// Reads an InputStream and converts it to a String.
-	public static String readStream(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+	private static String readStream(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
 	    Reader reader = null;
 	    reader = new InputStreamReader(stream, "UTF-8");        
 	    char[] buffer = new char[len];

@@ -11,6 +11,8 @@ import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -145,28 +148,48 @@ public class HTTP {
 		System.out.println(response.toString());
 	}
 	
+	// Sends an Http GET request given the source path and urlParams. See example at
+	// http://stackoverflow.com/questions/20321799/android-http-get. Uses Apache.
+	public static String getData(String path, List<BasicNameValuePair> urlParams) throws URISyntaxException {
+		HttpResponse response = null;
+	    HttpClient httpclient = new DefaultHttpClient();
+	    HttpGet request = null;
+	    request = new HttpGet();
+	    try {
+	        // Add the data
+	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+	        for (BasicNameValuePair data : urlParams) {
+	        	nameValuePairs.add(data);
+	        }
+	    	URI website = new URI(path+ "email=happymealsadarteries%40gmail.com&password=password123");
+	    	request.setURI(website);
+
+	    	// Print the HTTP method to make sure it's get
+	    	System.out.println("Http method: " + request.getMethod());
+	        // Execute HTTP Get Request
+	    	response = httpclient.execute(request);
+	        
+	        String responseString = new BasicResponseHandler().handleResponse(response);
+	        System.out.println(responseString);
+	        return responseString;
+	        
+	    } catch (ClientProtocolException e) {
+	    	e.printStackTrace();
+	    	System.out.println("http code is " + response.getStatusLine().toString());
+	    	return "Client error";
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    	return "IO error";
+	    }
+	}
+	
 	// Sends an Http POST request given the source path and urlParams. See example at
 	// http://stackoverflow.com/questions/2938502/sending-post-data-in-android. Uses Apache.
 	public static String postData(String path, List<BasicNameValuePair> urlParams) {
-	    // Create a new HttpClient and Post Header
-		
-		//additional path
-//		String extend = path + "email=dummy1@example.com&password=dummyone";
-//		String extend2 = path + "email=" + encodeURI("dummy1@example.com") + "&password=dummyone";
-		
 		HttpResponse response = null;
 	    HttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httppost = null;
 	    httppost = new HttpPost(path);
-//		try {
-//			String extend3 = path + "email=" + URLEncoder.encode("dummy1@example.com", "UTF-8")
-//					+ "&password=dummyone";
-//			httppost = new HttpPost(extend3);
-//		} catch (UnsupportedEncodingException e1) {
-//			System.out.println("url encoding didn't work. stack trace:\n");
-//			e1.printStackTrace();
-//		}
-	    
 
 	    try {
 	        // Add the data
@@ -180,14 +203,12 @@ public class HTTP {
 	    	String content = EntityUtils.toString(entity);
 	    	System.out.println("content is: " + content);
 
+	    	// Print HTTP method to make sure it's POST
+	    	System.out.println("Http method: " + httppost.getMethod());
 	        // Execute HTTP Post Request
-	        response = httpclient.execute(httppost);
+	    	response = httpclient.execute(httppost);
 	        
 	        // Convert response to string
-//	        HttpEntity entity_response = response.getEntity();
-//	        String responseString = EntityUtils.toString(entity_response, "UTF-8");
-//	        System.out.println(responseString);
-	        
 	        String responseString = new BasicResponseHandler().handleResponse(response);
 	        System.out.println(responseString);
 	        return responseString;

@@ -21,6 +21,8 @@
     <string name="followers">Followers</string>
     <string name="following">Following</string>
     <string name="posts">Posts</string>
+    
+    <string name="reshare_string">Reshare</string>
 
     
 </resources>

@@ -28,8 +28,8 @@
 	            android:id="@+id/title"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:layout_alignLeft="@+id/card_image"
-	            android:layout_below="@+id/card_image"
+	            android:layout_toRightOf="@+id/card_image"
+	            android:layout_alignParentTop="true"
 	            android:text="@string/card_title"
 	            android:color="@color/daapr_blue" />
 
@@ -43,29 +43,73 @@
 
 	        <TextView
 	            android:id="@+id/user"
+	            android:layout_marginTop="20dp"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_alignLeft="@+id/source"
 	            android:layout_below="@+id/source"
 	            android:text="@string/user" />
-
-	        <TextView
-	            android:id="@+id/time"
+	        
+	        <RelativeLayout
+	            android:id="@+id/bottom_card"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:layout_alignRight="@+id/card_image"
-	            android:layout_below="@+id/source"
-	            android:text="@string/time" />
+	            android:layout_alignParentBottom="true"
+	            android:layout_alignParentLeft="true" >
 
+	            <TextView
+	                android:id="@+id/time"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentBottom="true"
+	                android:layout_alignParentRight="true"
+	                android:text="@string/time" />
+	            
+	            <RelativeLayout 
+	                android:id="@+id/reshare_container"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_alignParentBottom="true" >
+	                
+	                <ImageView
+		                android:id="@+id/reshare_image"
+		                android:layout_width="12dp"
+		                android:layout_height="12dp"
+		                android:layout_marginLeft="115dp"
+		                android:layout_alignParentBottom="true"
+		                android:contentDescription="@string/reshare_string"
+		                android:scaleType="centerCrop"
+		                android:src="@drawable/reshare_small" />
+	                
+	                <TextView
+	                    android:id="@+id/reshare_count"
+	                    android:layout_alignParentBottom="true"
+	                	android:layout_width="12dp"
+		                android:layout_height="12dp"
+		                android:layout_marginLeft="120dp"
+	                	android:layout_toLeftOf="@id/reshare_image"
+	                	android:text="0" 
+	                	android:textColor="#c0c0c0" />
+	            </RelativeLayout>
+	        </RelativeLayout>
+	        
+			<View
+	            android:layout_width="fill_parent"
+	            android:layout_height="2dp"
+	            android:layout_alignParentLeft="true"
+	            android:layout_marginTop="20dp"
+	            android:layout_above="@+id/bottom_card"
+	            android:background="#c0c0c0" />
+	        
 	        <ImageView
 	            android:id="@+id/card_image"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
+				android:scaleType="centerCrop"
+	            android:layout_width="100dp"
+	            android:layout_height="100dp"
 	            android:layout_alignParentLeft="true"
 	            android:layout_alignParentTop="true"
 	            android:contentDescription="@string/test_card_name"
 	            android:src="@drawable/charlie" />
 	    </RelativeLayout>
-
 	</RelativeLayout>
 </ScrollView>

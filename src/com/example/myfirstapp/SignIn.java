@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,17 +40,25 @@ public class SignIn extends Activity {
 	
 	// Returns if a network connection is available.
 	public boolean availableConnection() {
-	    ConnectivityManager connMgr = (ConnectivityManager) 
-	        getSystemService(Context.CONNECTIVITY_SERVICE);
+	    ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-	    if (networkInfo != null && networkInfo.isConnected()) {
-	        // fetch data
-	    	return true;
-	    } else {
-	        // display error
-	    	return false;
-	    }
+	    return (networkInfo != null && networkInfo.isConnected()); // fetch data if true; else display error
 	}
+	
+	// Returns if device is connected to Internet.
+	public boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com"); //You can replace it with your name
+            if (ipAddr.equals("")) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (Exception e) {
+        	System.out.println("SOMETHING IS WRONG WITH INTERNET CONNECTION");
+            return false;
+        }
+    }
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,21 +75,16 @@ public class SignIn extends Activity {
 //			    	EditText password = (EditText) findViewById(R.id.password);
 					
 					String url = "https://stage4lungcancer.herokuapp.com/rest_sign_in?";
-					String email = "dummy1@example.com";
-					String password = "dummyone";
+					String email = "happymealsadarteries@gmail.com";
+					String password = "password123";
 					List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
 			        urlParams.add(new BasicNameValuePair("email", email));
 			    	urlParams.add(new BasicNameValuePair("password", password));
-			    	if (availableConnection()) {
-			    		System.out.println("There is an available network connection!");
-			    	}
-			    	else {
-			    		System.out.println("No network connection!!");
-			    	}
+			    	if (availableConnection()) { System.out.println("There is an available network connection!"); }
+			    	else { System.out.println("No network connection!!"); }
+			    	if (isInternetAvailable()) { System.out.println("Connected to the internet!"); }
+			    	else { System.out.println("Something went wrong with the internet connection"); }
 			    	new SignInTask().execute(url, urlParams);
-//			    	api_key = HTTP.postData(url, urlParams);
-					
-//					HTTP.sendPost(url, "email=aym27@cornell.edu&password=default");
 				} catch (Exception e) {
 					System.out.println("Sign in failed!");
 					e.printStackTrace();
@@ -116,7 +121,7 @@ public class SignIn extends Activity {
 	        tv1.setText(result);
 	        
 	        api_key = result;
-	        if (api_key != null) { signIn(); }
+	        if (api_key != null && api_key.indexOf("error") == -1) { signIn(); }
 	    }
 	}
 }

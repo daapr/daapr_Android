@@ -96,6 +96,8 @@ public class SignIn extends Activity {
 	/** Called when the user clicks the Sign In button */
 	public void signIn() {
 		Intent feed = new Intent(this, Feed.class);
+		if (api_key != null) { System.out.println("api_key is not null before sending to Feed.java"); }
+		feed.putExtra("API_KEY", api_key);
 		startActivity(feed);
 	}
 	
@@ -109,7 +111,8 @@ public class SignIn extends Activity {
 	private class SignInTask extends AsyncTask<Object, Void, String> {
 	    @SuppressWarnings("unchecked")
 		protected String doInBackground(Object... params) {
-	        return HTTP.postData((String) params[0],(List<BasicNameValuePair>) params[1]);
+	    	return "";
+//	        return HTTP.postData((String) params[0],(List<BasicNameValuePair>) params[1]);
 	    }
 
 	    protected void onPostExecute(String result) {
@@ -121,7 +124,8 @@ public class SignIn extends Activity {
 	        tv1.setText(result);
 	        
 	        api_key = result;
-	        if (api_key != null && api_key.indexOf("error") == -1) { signIn(); }
+//	        if (api_key != null && api_key.indexOf("error") == -1) { signIn(); }
+	        signIn();
 	    }
 	}
 }

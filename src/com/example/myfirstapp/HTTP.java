@@ -1,4 +1,5 @@
 package com.example.myfirstapp;
+import android.annotation.SuppressLint;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,6 +18,8 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 
 public class HTTP {
@@ -73,12 +76,14 @@ public class HTTP {
 	    	System.out.println("url is: " + path);
 	    	HttpEntity entity = new UrlEncodedFormEntity(nameValuePairs, "utf-8");
 	        httppost.setEntity(entity);
+	        
+	        //For testing purposes only
 	    	String content = EntityUtils.toString(entity);
 	    	System.out.println("content is: " + content);
-
 	    	// Print HTTP method to make sure it's POST
 	    	System.out.println("Http method: " + httppost.getMethod());
-	        // Execute HTTP Post Request
+	        
+	    	// Execute HTTP Post Request
 	    	response = httpclient.execute(httppost);
 	        
 	        // Convert response to string
@@ -94,6 +99,51 @@ public class HTTP {
 	    	e.printStackTrace();
 	    	return "IO error";
 	    }
+	}
+	
+	/** Returns an array of the feed items by sending an Http POST request. See example at
+	 *  http://stackoverflow.com/questions/18651641/how-to-put-http-response-into-array-in-android. */
+	@SuppressLint("NewApi")
+	public static Object[] append_feed(String path, List<BasicNameValuePair> urlParams) {
+		HttpResponse response = null;
+	    HttpClient httpclient = new DefaultHttpClient();
+	    HttpPost httppost = null;
+	    httppost = new HttpPost(path);
+
+	    // Delete this. Dummy array.
+	    Object[] dummy = new Object[1];
+	    try {
+	        // Add the data
+	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+	        for (BasicNameValuePair data : urlParams) {
+	        	nameValuePairs.add(data);
+	        }
+	    	HttpEntity entity = new UrlEncodedFormEntity(nameValuePairs, "utf-8");
+	        httppost.setEntity(entity);
+	    	String content = EntityUtils.toString(entity);
+	    	System.out.println("content is: " + path + content);
+
+	        // Execute HTTP Post Request
+	    	response = httpclient.execute(httppost);
+	    	// Convert HttpResponse into Object array via JSON
+	    	JSONArray array = new JSONArray(response);
+	    	Object[] result = new Object[array.length()];
+	    	for (int i = 0; i < array.length(); i++){
+	    	    result[i] = array.get(i);
+	    	}
+	    	return result;
+	        
+	    } catch (ClientProtocolException e) {
+	    	e.printStackTrace();
+	    	System.out.println("http code is " + response.getStatusLine().toString());
+	    	return dummy;
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    	return dummy;
+	    } catch (JSONException e) {
+			e.printStackTrace();
+			return dummy;
+		}
 	}
 
 	

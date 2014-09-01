@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -39,6 +40,8 @@ public class Feed extends ActionBarActivity {
 	int current_length;
 	String last_time_synchronized;
 	int CARD_WIDTH = 200;
+	int MP = LayoutParams.MATCH_PARENT;
+	int WP = LayoutParams.WRAP_CONTENT;
 	
 	public static Drawable loadImageFromWebOperations(String url) {
 	    try {
@@ -50,11 +53,13 @@ public class Feed extends ActionBarActivity {
 	    }
 	}
 	
-    @SuppressLint("SimpleDateFormat")
+    @SuppressLint({ "SimpleDateFormat", "NewApi" })
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.feed);
+        getActionBar().setDisplayShowHomeEnabled(false);
+        getActionBar().setDisplayShowTitleEnabled(false);
         
         api_key = getIntent().getStringExtra("API_KEY");
         if (current_length == 0) { System.out.println("The current_length is 0"); }
@@ -65,10 +70,7 @@ public class Feed extends ActionBarActivity {
         	String time = dateFormat.format(cal.getTime());
         	System.out.println("time " + time);
         	last_time_synchronized = time;
-        	System.out.println("Last time is " + last_time_synchronized);
         }
-//        ActionBar actionBar = getSupportActionBar();
-//        actionBar.setDisplayHomeAsUpEnabled(true);
         
         String url = "https://stage4lungcancer.herokuapp.com/rest_append_feed?";
         List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
@@ -76,12 +78,7 @@ public class Feed extends ActionBarActivity {
     	urlParams.add(new BasicNameValuePair("current_length", "" + current_length));
     	urlParams.add(new BasicNameValuePair("last_time_synchronized", last_time_synchronized));
     	new FeedTask().execute(url, urlParams);
-        
-        // background color: #f4f4f4
-        // border: 1px solid #dedede;      
-        // blue: #53B6B4
-        
-        
+
 //        if (savedInstanceState == null) {
 //            getSupportFragmentManager().beginTransaction()
 //                    .add(R.id.container, new PlaceholderFragment())
@@ -90,6 +87,8 @@ public class Feed extends ActionBarActivity {
 
     }
 
+    // Uncomment when top bar needed.
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	// Inflate the menu items for use in the action bar
@@ -121,6 +120,7 @@ public class Feed extends ActionBarActivity {
 		        return super.onOptionsItemSelected(item);
     	}
     }
+    */
     	 
 	/** Called when the user clicks the Settings action item */
     private void openSettings() {
@@ -150,12 +150,12 @@ public class Feed extends ActionBarActivity {
 		startActivity(profile);
 	}
     
-    /** Background thread that sends an Http POST request. */
+    /** Background thread that sends an Http POST request to append new feed items. */
 	private class FeedTask extends AsyncTask<Object, Void, Object[]> {
 	    @SuppressWarnings("unchecked")
 		protected Object[] doInBackground(Object... params) {
 	    	// FIX. postData() needs to be able to return an array!
-//	        return HTTP.postData((String) params[0],(List<BasicNameValuePair>) params[1]);
+//	        return HTTP.append_feed((String) params[0],(List<BasicNameValuePair>) params[1]);
 	    	
 	    	// Dummy Object array. Delete. (Replace with actual postData() call)
 	    	Object[] result = new Object[5];
@@ -177,8 +177,7 @@ public class Feed extends ActionBarActivity {
 	        	
 	        	// Container that holds the cards
 	        	final RelativeLayout container_layout = new RelativeLayout(getApplicationContext());
-	        	LayoutParams lp = (LayoutParams) new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-	        			LayoutParams.WRAP_CONTENT);
+	        	LayoutParams lp = (LayoutParams) new RelativeLayout.LayoutParams(MP, WP);
 	        	container_layout.setLayoutParams(lp);
 	        	int h_margin = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
 	        	int v_margin = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
@@ -189,8 +188,8 @@ public class Feed extends ActionBarActivity {
 	        	
 		        // Background color and margins
 	        	final RelativeLayout card_layout = new RelativeLayout(getApplicationContext());
-	        	LayoutParams lp_card = (LayoutParams) new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-	        			LayoutParams.WRAP_CONTENT);
+	        	LayoutParams lp_card = (LayoutParams) new RelativeLayout.LayoutParams(WP,
+	        			WP);
 	        	card_layout.setLayoutParams(lp_card);
 	        	card_layout.setBackgroundColor(getResources().getColor(R.color.white));
 
@@ -209,8 +208,8 @@ public class Feed extends ActionBarActivity {
 		        // Title text
 	        	TextView title_tv = new TextView(getApplicationContext());
 	        	title_tv.setId((i + 1) * 10);
-	        	LayoutParams lp_title = (LayoutParams) new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-	        			LayoutParams.WRAP_CONTENT);
+	        	LayoutParams lp_title = (LayoutParams) new RelativeLayout.LayoutParams(WP,
+	        			WP);
 	        	title_tv.setLayoutParams(lp_title);
 		        title_tv.setTextColor(getResources().getColor(R.color.daapr_blue));
 		        Spannable title_text = new SpannableString("Sample Title: World Champion Wieber");
@@ -222,8 +221,8 @@ public class Feed extends ActionBarActivity {
 		        // Source text
 		        TextView source_tv = new TextView(getApplicationContext());
 		        source_tv.setId((i + 1) * 100);
-		        LayoutParams lp_source = (LayoutParams) new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-	        			LayoutParams.WRAP_CONTENT);
+		        LayoutParams lp_source = (LayoutParams) new RelativeLayout.LayoutParams(WP,
+	        			WP);
 	        	source_tv.setLayoutParams(lp_source);
 	        	Spannable source_text = new SpannableString("Sample Source: USA Gymnastics");
 		        source_text.setSpan(new RelativeSizeSpan(0.8f), 0, source_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -235,8 +234,8 @@ public class Feed extends ActionBarActivity {
 		        // User text
 		        TextView user_tv = new TextView(getApplicationContext());
 		        user_tv.setId((i + 1) * 1000);
-		        LayoutParams lp_user = (LayoutParams) new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-	        			LayoutParams.WRAP_CONTENT);
+		        LayoutParams lp_user = (LayoutParams) new RelativeLayout.LayoutParams(WP,
+	        			WP);
 	        	user_tv.setLayoutParams(lp_user);
 	        	Spannable user_text = new SpannableString("Mckayla Maroney");
 		        user_text.setSpan(new RelativeSizeSpan(0.8f), 0, user_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -249,8 +248,8 @@ public class Feed extends ActionBarActivity {
 		        // Time stamp text
 		        TextView time_tv = new TextView(getApplicationContext());
 		        time_tv.setId((i + 1) * 10000);
-		        LayoutParams lp_time = (LayoutParams) new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-	        			LayoutParams.WRAP_CONTENT);
+		        LayoutParams lp_time = (LayoutParams) new RelativeLayout.LayoutParams(WP,
+	        			WP);
 	        	time_tv.setLayoutParams(lp_time);
 	        	Spannable time_text = new SpannableString("4 months ago");
 		        time_text.setSpan(new RelativeSizeSpan(0.8f), 0, time_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -268,61 +267,60 @@ public class Feed extends ActionBarActivity {
 		        feed_layout.addView(container_layout);
 		        
 		        // Handles card reaction on click
-		        OnClickListener card_click = new OnClickListener() {
-		        	// START HERE. Finish adding card options.
-		        	@Override
-		            public void onClick(View v) {
-		        		TextView view_tv = new TextView(getApplicationContext());
-		            	view_tv.setText("View this");
-		                LayoutParams lp_view_tv = (LayoutParams) new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-			  	        	CARD_WIDTH);
-			  	        view_tv.setLayoutParams(lp_view_tv);
-			  	        view_tv.setBackgroundColor(getResources().getColor(R.color.daapr_blue));
-			  	        card_layout.addView(view_tv);
-			  	        container_layout.invalidate();
-			  	        feed_layout.invalidate();
-		        	}
-		        };
-	        	card_layout.setOnClickListener(card_click);
+//		        OnClickListener card_click = new OnClickListener() {
+//		        	@Override
+//		            public void onClick(View v) {
+//		        		// Box that covers entire card
+//		        		RelativeLayout card_options_layout = new RelativeLayout(getApplicationContext());
+//		        		card_options_layout.setLayoutParams((LayoutParams) new RelativeLayout.LayoutParams(
+//		        				MP, CARD_WIDTH));
+//		        		card_options_layout.setBackgroundColor(getResources().getColor(R.color.oil));
+//		        		
+//		        		ImageView like_iv = new ImageView(getApplicationContext());
+//		        		// GIVE IT A REAL ID
+//		        		like_iv.setId(2000);
+//		        		like_iv.setImageResource(R.drawable.reshare_small);
+//		        		like_iv.setContentDescription("Like");
+//		        		LayoutParams like_lp = (LayoutParams) new RelativeLayout.LayoutParams(CARD_WIDTH / 3,
+//		        				CARD_WIDTH / 3);
+//		        		like_iv.setLayoutParams(like_lp);
+//		        		like_lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+//		        		
+//		        		ImageView reshare_iv = new ImageView(getApplicationContext());
+//		        		reshare_iv.setImageResource(R.drawable.reshare_small);
+//		        		reshare_iv.setContentDescription("Reshare");
+//		        		LayoutParams reshare_lp = (LayoutParams) new RelativeLayout.LayoutParams(CARD_WIDTH / 3,
+//		        				CARD_WIDTH / 3);
+//		        		reshare_iv.setLayoutParams(reshare_lp);
+//		        		reshare_lp.addRule(RelativeLayout.LEFT_OF, like_iv.getId());
+//
+//		        		ImageView comment_iv = new ImageView(getApplicationContext());
+//		        		comment_iv.setImageResource(R.drawable.reshare_small);
+//		        		comment_iv.setContentDescription("Comment");
+//		        		LayoutParams comment_lp = (LayoutParams) new RelativeLayout.LayoutParams(CARD_WIDTH / 3,
+//		        				CARD_WIDTH / 3);
+//		        		comment_iv.setLayoutParams(comment_lp);
+//		        		comment_lp.addRule(RelativeLayout.RIGHT_OF, like_iv.getId());
+//		        		
+//		        		TextView view_tv = new TextView(getApplicationContext());	
+//		            	view_tv.setText("View this");
+//		                LayoutParams lp_view_tv = (LayoutParams) new RelativeLayout.LayoutParams(MP,
+//			  	        	(CARD_WIDTH / 3));
+//			  	        view_tv.setLayoutParams(lp_view_tv);
+//			  	        lp_view_tv.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+//			  	        view_tv.setBackgroundColor(getResources().getColor(R.color.daapr_blue));
+//			  	        
+//			  	        card_options_layout.addView(like_iv);
+//			  	        card_options_layout.addView(reshare_iv);
+//			  	        card_options_layout.addView(comment_iv);
+//			  	        card_options_layout.addView(view_tv);
+//			  	        card_layout.addView(card_options_layout);
+//			  	        container_layout.invalidate();
+//			  	        feed_layout.invalidate();
+//		        	}
+//		        };
+//	        	card_layout.setOnClickListener(card_click);
 	        }
 	    }
 	}
-	
-	/** Generic array class. Currently unused. */
-	public class GenSet<E> {
-
-	    private Object[] a;
-
-	    public GenSet(int s) {
-	        a = new Object[s];
-	    }
-
-	    E get(int i) {
-	        @SuppressWarnings("unchecked")
-	        final E e = (E) a[i];
-	        return e;
-	    }
-	}
-
-//	/**
-//     * A placeholder fragment containing a simple view.
-//     */
-//    public static class PlaceholderFragment extends Fragment {
-//
-//        public PlaceholderFragment() {
-//        }
-//
-//        @Override
-//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                Bundle savedInstanceState) {
-//            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-//            return rootView;
-//        }
-//    }
-    
-//    @Override
-//	protected void onPause() {
-//		super.onPause();
-//	}
-
 }

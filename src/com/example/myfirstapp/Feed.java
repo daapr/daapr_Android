@@ -24,10 +24,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 
@@ -167,7 +171,12 @@ public class Feed extends ActionBarActivity {
 	        //#10-reshare_id, 11-micropost_user_id, 12-like_num, 13-current_user_liked, 14-reshare_num, 15-current_user_reshared, 16-caption, 17-comment_num, 18-?, 19-?, 20-micropost_description
             final LinearLayout feed_layout = (LinearLayout) findViewById(R.id.feed);
 	        // replace 10 with result.length
-	        for (int i = 0; i < 10; i++) {
+            int length = 1000;
+            int load = 20;
+            if (length > 20) {
+            	length -= load;
+            }
+	        for (int i = 0; i < load; i++) {
 //	        	String title = result[i][2];
 //	        	String site_name = result[i][5];
 //	        	String micropost_user_name = result[i][7];
@@ -182,7 +191,7 @@ public class Feed extends ActionBarActivity {
 	        	int h_margin = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
 	        	int v_margin = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
 	        	// FIX. Change i to be length of result array.
-	        	if (i != 9) { container_layout.setPadding(h_margin, v_margin, h_margin, 0); }
+	        	if (i != load - 1) { container_layout.setPadding(h_margin, v_margin, h_margin, 0); }
 	        	else { container_layout.setPadding(h_margin, v_margin, h_margin, v_margin); }
 	        	container_layout.setBackgroundColor(getResources().getColor(R.color.feed_color));
 	        	
@@ -193,7 +202,7 @@ public class Feed extends ActionBarActivity {
 	        	card_layout.setLayoutParams(lp_card);
 	        	card_layout.setBackgroundColor(getResources().getColor(R.color.white));
 
-		        // Image that goes on card
+		        // Image that goes  on card
 	        	ImageView card_image = new ImageView(getApplicationContext());
 	        	// Replace i with actual Id!
 	        	card_image.setId(i + 1);
@@ -264,7 +273,35 @@ public class Feed extends ActionBarActivity {
 		        card_layout.addView(user_tv);
 		        card_layout.addView(time_tv);
 		        container_layout.addView(card_layout);
+		        
+//		        ArrayList<View> feedArray =  new ArrayList<View>();
+//		        feedArray.add(card_layout);
+//		        ArrayAdapter<View> adapter = new ArrayAdapter<View>(getApplicationContext(), R.id.dummytv, feedArray);
+//		        feed_layout.setAdapter(adapter);
 		        feed_layout.addView(container_layout);
+		        
+//		        feed_layout.setOnScrollListener(new OnScrollListener() {
+//
+//		        	@Override
+//		            public void onScrollStateChanged(AbsListView view, int scrollState) {
+//
+//
+//		            }
+//
+//		        	@Override
+//		            public void onScroll(AbsListView view, int firstVisibleItem,
+//		                    int visibleItemCount, int totalItemCount) {
+//
+//		                if(firstVisibleItem+visibleItemCount == totalItemCount && totalItemCount!=0)
+//		                {
+//		                    if(flag_loading == false)
+//		                    {
+//		                        flag_loading = true;
+//		                        additems();
+//		                    }
+//		                }
+//		            }
+//		        });
 		        
 		        // Handles card reaction on click
 //		        OnClickListener card_click = new OnClickListener() {

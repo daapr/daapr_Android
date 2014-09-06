@@ -17,6 +17,7 @@ import org.apache.http.message.BasicNameValuePair;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -33,8 +34,9 @@ import android.widget.TextView;
 
 public class SignIn extends Activity {
 	
-	int daapr_gray = Color.parseColor("#B3B3B3");
-	int daapr_blue = Color.parseColor("#53B6B4");
+//	int daapr_gray = Color.parseColor("#B3B3B3");
+//	int daapr_blue = Color.parseColor("#53B6B4");
+//	int daapr_red = Color.parseColor("#FF6666");
 	String api_key;
 	
 	
@@ -65,6 +67,9 @@ public class SignIn extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.signin);
 		
+		int h_margin = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
+    	int v_margin = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
+		
 		Button btn = (Button) findViewById(R.id.signin);
 		btn.setOnClickListener(new View.OnClickListener() {
 		    @Override
@@ -74,9 +79,9 @@ public class SignIn extends Activity {
 //					EditText email = (EditText) findViewById(R.id.email);
 //			    	EditText password = (EditText) findViewById(R.id.password);
 					
-					String url = "https://stage4lungcancer.herokuapp.com/rest_sign_in?";
-					String email = "happymealsadarteries@gmail.com";
-					String password = "password123";
+					String url = "https://staging.daapr.com/rest_sign_in?";
+					String email = "happiness@gmail.com";
+					String password = "happiness1";
 					List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
 			        urlParams.add(new BasicNameValuePair("email", email));
 			    	urlParams.add(new BasicNameValuePair("password", password));
@@ -101,18 +106,12 @@ public class SignIn extends Activity {
 		startActivity(feed);
 	}
 	
-	@Override
-	protected void onPause() {
-		super.onPause();
-		finish();
-	}
-	
 	/** Background thread that sends an Http POST request. */
 	private class SignInTask extends AsyncTask<Object, Void, String> {
 	    @SuppressWarnings("unchecked")
 		protected String doInBackground(Object... params) {
-	    	return "";
-//	        return HTTP.postData((String) params[0],(List<BasicNameValuePair>) params[1]);
+//	    	return "";
+	        return HTTP.postData((String) params[0],(List<BasicNameValuePair>) params[1]);
 	    }
 
 	    protected void onPostExecute(String result) {
@@ -127,5 +126,10 @@ public class SignIn extends Activity {
 //	        if (api_key != null && api_key.indexOf("error") == -1) { signIn(); }
 	        signIn();
 	    }
+	}
+	
+	public void onConfigurationChanged(Configuration newConfig)
+	{
+		super.onConfigurationChanged(newConfig);
 	}
 }

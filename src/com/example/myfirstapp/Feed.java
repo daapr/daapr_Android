@@ -39,13 +39,12 @@ import android.widget.TextView;
 public class Feed extends ActionBarActivity {
 
 	// Global Variables
-	int numTextViews = 2;
 	String api_key;
 	int current_length;
 	String last_time_synchronized;
-	int CARD_WIDTH = 200;
-	int MP = LayoutParams.MATCH_PARENT;
-	int WP = LayoutParams.WRAP_CONTENT;
+	static int CARD_WIDTH = 200;
+	static int MP = LayoutParams.MATCH_PARENT;
+	static int WP = LayoutParams.WRAP_CONTENT;
 	
 	public static Drawable loadImageFromWebOperations(String url) {
 	    try {
@@ -182,8 +181,6 @@ public class Feed extends ActionBarActivity {
 //	        	String micropost_user_name = result[i][7];
 //	        	String image_url = result[i][3];
 	        	
-//		        card width = 280
-	        	
 	        	// Container that holds the cards
 	        	final RelativeLayout container_layout = new RelativeLayout(getApplicationContext());
 	        	LayoutParams lp = (LayoutParams) new RelativeLayout.LayoutParams(MP, WP);
@@ -195,85 +192,10 @@ public class Feed extends ActionBarActivity {
 	        	else { container_layout.setPadding(h_margin, v_margin, h_margin, v_margin); }
 	        	container_layout.setBackgroundColor(getResources().getColor(R.color.feed_color));
 	        	
-		        // Background color and margins
-	        	final RelativeLayout card_layout = new RelativeLayout(getApplicationContext());
-	        	LayoutParams lp_card = (LayoutParams) new RelativeLayout.LayoutParams(WP,
-	        			WP);
-	        	card_layout.setLayoutParams(lp_card);
-	        	card_layout.setBackgroundColor(getResources().getColor(R.color.white));
-
-		        // Image that goes  on card
-	        	ImageView card_image = new ImageView(getApplicationContext());
-	        	// Replace i with actual Id!
-	        	card_image.setId(i + 1);
-		        card_image.setImageResource(R.drawable.wieber);
-		        card_image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-		        LayoutParams lp_card_image = (LayoutParams) new RelativeLayout.LayoutParams(CARD_WIDTH, CARD_WIDTH);
-	        	card_image.setLayoutParams(lp_card_image);
-	        	lp_card_image.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-	        	lp_card_image.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-	        	card_image.setContentDescription("Jordyn Wieber wins gold!");
-	        	
-		        // Title text
-	        	TextView title_tv = new TextView(getApplicationContext());
-	        	title_tv.setId((i + 1) * 10);
-	        	LayoutParams lp_title = (LayoutParams) new RelativeLayout.LayoutParams(WP,
-	        			WP);
-	        	title_tv.setLayoutParams(lp_title);
-		        title_tv.setTextColor(getResources().getColor(R.color.daapr_blue));
-		        Spannable title_text = new SpannableString("Sample Title: World Champion Wieber");
-		        title_text.setSpan(new RelativeSizeSpan(1f), 0, title_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-		        title_tv.setText(title_text);
-                lp_title.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                lp_title.addRule(RelativeLayout.RIGHT_OF, card_image.getId());
+	        	Card card = new Card(getApplicationContext(), i + 1, (i + 1) * 10,
+	        			(i + 1) * 100, (i + 1) * 1000, (i + 1) * 10000);
 		        
-		        // Source text
-		        TextView source_tv = new TextView(getApplicationContext());
-		        source_tv.setId((i + 1) * 100);
-		        LayoutParams lp_source = (LayoutParams) new RelativeLayout.LayoutParams(WP,
-	        			WP);
-	        	source_tv.setLayoutParams(lp_source);
-	        	Spannable source_text = new SpannableString("Sample Source: USA Gymnastics");
-		        source_text.setSpan(new RelativeSizeSpan(0.8f), 0, source_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-		        source_tv.setTextColor(getResources().getColor(R.color.source_gray));
-		        source_tv.setText(source_text);
-		        lp_source.addRule(RelativeLayout.BELOW, title_tv.getId());
-		        lp_source.addRule(RelativeLayout.ALIGN_LEFT, title_tv.getId());
-		        
-		        // User text
-		        TextView user_tv = new TextView(getApplicationContext());
-		        user_tv.setId((i + 1) * 1000);
-		        LayoutParams lp_user = (LayoutParams) new RelativeLayout.LayoutParams(WP,
-	        			WP);
-	        	user_tv.setLayoutParams(lp_user);
-	        	Spannable user_text = new SpannableString("Mckayla Maroney");
-		        user_text.setSpan(new RelativeSizeSpan(0.8f), 0, user_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-		        user_tv.setTextColor(getResources().getColor(R.color.daapr_blue));
-		        user_tv.setText(user_text);
-		        lp_user.setMargins(0, 20, 0, 0);
-		        lp_user.addRule(RelativeLayout.ALIGN_LEFT, source_tv.getId());
-		        lp_user.addRule(RelativeLayout.BELOW, source_tv.getId());
-		        
-		        // Time stamp text
-		        TextView time_tv = new TextView(getApplicationContext());
-		        time_tv.setId((i + 1) * 10000);
-		        LayoutParams lp_time = (LayoutParams) new RelativeLayout.LayoutParams(WP,
-	        			WP);
-	        	time_tv.setLayoutParams(lp_time);
-	        	Spannable time_text = new SpannableString("4 months ago");
-		        time_text.setSpan(new RelativeSizeSpan(0.8f), 0, time_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-		        time_tv.setTextColor(getResources().getColor(R.color.daapr_gray));
-		        time_tv.setText(time_text);
-		        lp_time.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-		        lp_time.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-		        
-		        card_layout.addView(card_image);
-		        card_layout.addView(title_tv);
-		        card_layout.addView(source_tv);
-		        card_layout.addView(user_tv);
-		        card_layout.addView(time_tv);
-		        container_layout.addView(card_layout);
-		        
+		        container_layout.addView(card.layout);
 //		        ArrayList<View> feedArray =  new ArrayList<View>();
 //		        feedArray.add(card_layout);
 //		        ArrayAdapter<View> adapter = new ArrayAdapter<View>(getApplicationContext(), R.id.dummytv, feedArray);

@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.apache.http.message.BasicNameValuePair;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class SignIn extends Activity {
@@ -62,6 +64,7 @@ public class SignIn extends Activity {
         }
     }
 
+	@SuppressLint("ResourceAsColor")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -71,6 +74,7 @@ public class SignIn extends Activity {
     	int v_margin = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
 		
 		Button btn = (Button) findViewById(R.id.signin);
+		btn.setPadding(v_margin, h_margin, v_margin, h_margin);
 		btn.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
@@ -79,7 +83,7 @@ public class SignIn extends Activity {
 //					EditText email = (EditText) findViewById(R.id.email);
 //			    	EditText password = (EditText) findViewById(R.id.password);
 					
-					String url = "https://staging.daapr.com/rest_sign_in?";
+					String url = "https://www.orangeseven7.com/rest_sign_in?";
 					String email = "happiness@gmail.com";
 					String password = "happiness1";
 					List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);

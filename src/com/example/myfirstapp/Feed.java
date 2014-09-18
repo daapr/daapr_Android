@@ -13,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -24,7 +25,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,16 +49,10 @@ public class Feed extends ActionBarActivity {
 	static int CARD_WIDTH = 200;
 	static int MP = LayoutParams.MATCH_PARENT;
 	static int WP = LayoutParams.WRAP_CONTENT;
-	
-	public static Drawable loadImageFromWebOperations(String url) {
-	    try {
-	        InputStream is = (InputStream) new URL(url).getContent();
-	        Drawable d = Drawable.createFromStream(is, "src name");
-	        return d;
-	    } catch (Exception e) {
-	        return null;
-	    }
-	}
+	Context context;
+	int initial_feed_length = 20;
+	String url = "https://daapr.com/rest_append_feed?";
+
 	
     @SuppressLint({ "SimpleDateFormat", "NewApi" })
 	@Override
@@ -63,33 +61,12 @@ public class Feed extends ActionBarActivity {
         setContentView(R.layout.feed);
         getActionBar().setDisplayShowHomeEnabled(false);
         getActionBar().setDisplayShowTitleEnabled(false);
+        context = this;
         
         api_key = getIntent().getStringExtra("API_KEY");
-        if (current_length == 0) { System.out.println("The current_length is 0"); }
-        // Set last_time_synchronized to current time if it has not been set yet
-        if (last_time_synchronized == null) {
-        	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
-        	Calendar cal = Calendar.getInstance();
-        	String time = dateFormat.format(cal.getTime());
-        	System.out.println("time " + time);
-        	last_time_synchronized = time;
-        }
-        
-        String url = "https://stage4lungcancer.herokuapp.com/rest_append_feed?";
-        List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
-        urlParams.add(new BasicNameValuePair("api_key", api_key));
-    	urlParams.add(new BasicNameValuePair("current_length", "" + current_length));
-    	urlParams.add(new BasicNameValuePair("last_time_synchronized", last_time_synchronized));
-    	new FeedTask().execute(url, urlParams);
-
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.container, new PlaceholderFragment())
-//                    .commit();
-//        }
-
+        updateParams(current_length, last_time_synchronized);
     }
-
+    
     // Uncomment when top bar needed.
     /*
     @Override
@@ -153,19 +130,113 @@ public class Feed extends ActionBarActivity {
 		startActivity(profile);
 	}
     
+    /** Display card options view. Currently unused.*/
+    public RelativeLayout showCardOptions() {
+    	// Box that covers entire card
+		RelativeLayout card_options_layout = new RelativeLayout(getApplicationContext());
+		card_options_layout.setLayoutParams((LayoutParams) new RelativeLayout.LayoutParams(
+				MP, CARD_WIDTH));
+		card_options_layout.setBackgroundColor(getResources().getColor(R.color.trans_blue));
+
+		TextView view_tv = new TextView(getApplicationContext());	
+    	view_tv.setText("View this");
+        LayoutParams lp_view_tv = (LayoutParams) new RelativeLayout.LayoutParams(MP,
+	        	(CARD_WIDTH / 3));
+        view_tv.setLayoutParams(lp_view_tv);
+        lp_view_tv.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        view_tv.setBackgroundColor(getResources().getColor(R.color.daapr_blue));
+        
+        card_options_layout.addView(view_tv);
+        return card_options_layout;
+    }
+    
+    @SuppressLint("SimpleDateFormat")
+	public void updateParams(int new_length, String last_time_synchronized) {
+        List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
+        if (current_length == 0) { System.out.println("The current_length is 0"); }
+    	// Set last_time_synchronized to current time if it has not been set yet
+    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
+    	Calendar cal = Calendar.getInstance();
+    	String time = dateFormat.format(cal.getTime());
+    	System.out.println("time " + time);
+    	last_time_synchronized = time;
+        urlParams.add(new BasicNameValuePair("api_key", api_key));
+    	urlParams.add(new BasicNameValuePair("current_length", "" + new_length));
+    	urlParams.add(new BasicNameValuePair("last_time_synchronized", last_time_synchronized));
+    	new FeedTask().execute(url, urlParams);
+    }
+
     /** Background thread that sends an Http POST request to append new feed items. */
 	private class FeedTask extends AsyncTask<Object, Void, Object[]> {
+
 	    @SuppressWarnings("unchecked")
 		protected Object[] doInBackground(Object... params) {
-	    	// FIX. postData() needs to be able to return an array!
-//	        return HTTP.append_feed((String) params[0],(List<BasicNameValuePair>) params[1]);
-	    	
-	    	// Dummy Object array. Delete. (Replace with actual postData() call)
-	    	Object[] result = new Object[5];
-	    	return result;
+	        return HTTP.append_feed((String) params[0],(List<BasicNameValuePair>) params[1]);
 	    }
 
-	    protected void onPostExecute(Object[] result) {	    	
+	    protected void onPostExecute(Object[] result) {
+	    	System.out.println("In onPostExecute for Feed");
+	    	
+	    	final ListView feed_listview = (ListView)findViewById(R.id.feed_list);
+	        Card card_data[] = new Card[result.length];
+        	// Loop through result array to initialize all Cards
+        	for (int i = 0; i < result.length; i++) {
+        		card_data[i] = new Card(getApplicationContext(), result[i], i);
+        		
+        		// The below code isn't registering for some reason...
+//        		final RelativeLayout card_layout = card_data[i].layout;
+//                // Handles card reaction on click
+//                card_layout.setOnClickListener(new OnClickListener() {
+//                	@SuppressWarnings("null")
+//					@Override
+//                    public void onClick(View v) {
+//                		System.out.println("IN ONCLICK FOR CARD");
+//                		
+//        	  	        card_layout.invalidate();
+//        	  	        feed_listview.invalidate();
+//                	}
+//                });
+        	}
+        	// Adapt cards to views to be put in the listview
+	        final CardAdapter adapter = new CardAdapter(context, R.layout.listview_card, card_data);
+	        feed_listview.setAdapter(adapter);
+	        feed_listview.setOnScrollListener(new AbsListView.OnScrollListener() {
+	        	@Override
+	            public void onScroll(AbsListView view, int firstVisible, int visibleCount, int totalCount) {
+	                boolean loadMore = /* maybe add a padding */
+	                    firstVisible + visibleCount >= totalCount - 5;
+	                if(loadMore) {
+	                	current_length += adapter.count;
+	                    adapter.count += visibleCount; // or any other amount
+	                    adapter.notifyDataSetChanged();
+	                    updateParams(current_length, last_time_synchronized);
+	                }
+	            }
+	        	@Override
+	            public void onScrollStateChanged(AbsListView v, int s) { }
+	        });
+	        
+	        // Set listview items to have onItemClickListeners. Opens link (no intermediate view.
+	        // For intermediate view, see http://stackoverflow.com/questions/6867372/add-onclicklistener-to-listview-item.
+	        // See http://stackoverflow.com/questions/18818279/listview-to-open-hyperlinks-in-android.
+	        feed_listview.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
+//					RelativeLayout card_options_layout = showCardOptions();
+//					feed_listview.addView(card_options_layout);
+//					feed_listview.invalidate();
+					String url = adapter.getItem(position).url;
+			        Intent i = new Intent(Intent.ACTION_VIEW);
+			        i.setData(Uri.parse(url));
+			        startActivity(i);
+				}
+	        });
+	        
+	        
+//	        feed_listview.invalidate();
+	    	
+	    	/*//ORIGINAL CODE BEGIN
 	        //#0-micropost_id, 1-url, 2-title,3-image_url,4-video_url,5-site_name,6-reshare_user_id, 7-micropost_user_name,8-reshare_user_name, 9-reshare_created_at
 	        //#10-reshare_id, 11-micropost_user_id, 12-like_num, 13-current_user_liked, 14-reshare_num, 15-current_user_reshared, 16-caption, 17-comment_num, 18-?, 19-?, 20-micropost_description
             final LinearLayout feed_layout = (LinearLayout) findViewById(R.id.feed);
@@ -196,45 +267,21 @@ public class Feed extends ActionBarActivity {
 	        			(i + 1) * 100, (i + 1) * 1000, (i + 1) * 10000);
 		        
 		        container_layout.addView(card.layout);
-//		        ArrayList<View> feedArray =  new ArrayList<View>();
-//		        feedArray.add(card_layout);
-//		        ArrayAdapter<View> adapter = new ArrayAdapter<View>(getApplicationContext(), R.id.dummytv, feedArray);
-//		        feed_layout.setAdapter(adapter);
 		        feed_layout.addView(container_layout);
-		        
-//		        feed_layout.setOnScrollListener(new OnScrollListener() {
-//
-//		        	@Override
-//		            public void onScrollStateChanged(AbsListView view, int scrollState) {
-//
-//
-//		            }
-//
-//		        	@Override
-//		            public void onScroll(AbsListView view, int firstVisibleItem,
-//		                    int visibleItemCount, int totalItemCount) {
-//
-//		                if(firstVisibleItem+visibleItemCount == totalItemCount && totalItemCount!=0)
-//		                {
-//		                    if(flag_loading == false)
-//		                    {
-//		                        flag_loading = true;
-//		                        additems();
-//		                    }
-//		                }
-//		            }
-//		        });
+		        */ //ORIGINAL CODE END
+	        
 		        
 		        // Handles card reaction on click
-//		        OnClickListener card_click = new OnClickListener() {
-//		        	@Override
-//		            public void onClick(View v) {
-//		        		// Box that covers entire card
-//		        		RelativeLayout card_options_layout = new RelativeLayout(getApplicationContext());
-//		        		card_options_layout.setLayoutParams((LayoutParams) new RelativeLayout.LayoutParams(
-//		        				MP, CARD_WIDTH));
+		        /*OnClickListener card_click = new OnClickListener() {
+		        	@Override
+		            public void onClick(View v) {
+		        		// Box that covers entire card
+		        		RelativeLayout card_options_layout = new RelativeLayout(getApplicationContext());
+		        		card_options_layout.setLayoutParams((LayoutParams) new RelativeLayout.LayoutParams(
+		        				MP, CARD_WIDTH));
 //		        		card_options_layout.setBackgroundColor(getResources().getColor(R.color.oil));
-//		        		
+		        		card_options_layout.setBackgroundColor(getResources().getColor(R.color.trans_blue));
+
 //		        		ImageView like_iv = new ImageView(getApplicationContext());
 //		        		// GIVE IT A REAL ID
 //		        		like_iv.setId(2000);
@@ -260,26 +307,30 @@ public class Feed extends ActionBarActivity {
 //		        				CARD_WIDTH / 3);
 //		        		comment_iv.setLayoutParams(comment_lp);
 //		        		comment_lp.addRule(RelativeLayout.RIGHT_OF, like_iv.getId());
-//		        		
-//		        		TextView view_tv = new TextView(getApplicationContext());	
-//		            	view_tv.setText("View this");
-//		                LayoutParams lp_view_tv = (LayoutParams) new RelativeLayout.LayoutParams(MP,
-//			  	        	(CARD_WIDTH / 3));
-//			  	        view_tv.setLayoutParams(lp_view_tv);
-//			  	        lp_view_tv.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//			  	        view_tv.setBackgroundColor(getResources().getColor(R.color.daapr_blue));
-//			  	        
+		        		
+		        		TextView view_tv = new TextView(getApplicationContext());	
+		            	view_tv.setText("View this");
+		                LayoutParams lp_view_tv = (LayoutParams) new RelativeLayout.LayoutParams(MP,
+			  	        	(CARD_WIDTH / 3));
+			  	        view_tv.setLayoutParams(lp_view_tv);
+			  	        lp_view_tv.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+			  	        view_tv.setBackgroundColor(getResources().getColor(R.color.daapr_blue));
+			  	        
 //			  	        card_options_layout.addView(like_iv);
 //			  	        card_options_layout.addView(reshare_iv);
 //			  	        card_options_layout.addView(comment_iv);
-//			  	        card_options_layout.addView(view_tv);
+			  	        card_options_layout.addView(view_tv);
 //			  	        card_layout.addView(card_options_layout);
 //			  	        container_layout.invalidate();
 //			  	        feed_layout.invalidate();
-//		        	}
-//		        };
+			  	        feed_listview.invalidate();
+		        	}
+		        };
 //	        	card_layout.setOnClickListener(card_click);
-	        }
+//		        layout.setOnClickListener(card_click); */
+	        
+	        
+	        //} //FOR LOOP END
 	    }
 	}
 }

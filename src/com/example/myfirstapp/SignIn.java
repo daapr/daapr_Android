@@ -1,14 +1,6 @@
 package com.example.myfirstapp;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +11,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -31,7 +21,6 @@ import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class SignIn extends Activity {
@@ -70,29 +59,32 @@ public class SignIn extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.signin);
 		
-		int h_margin = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
-    	int v_margin = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
+		final int h_margin = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
+		final int v_margin = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
+//		LinearLayout signin_layout = (LinearLayout) findViewById(R.layout.signin);
+//		signin_layout.setPadding(h_margin, v_margin, h_margin, v_margin);
+		
+		// Actual user input values.
+    	EditText email_unused = (EditText) findViewById(R.id.username);
+    	EditText password_unused = (EditText) findViewById(R.id.password);
+    	email_unused.setBackgroundResource(android.R.drawable.editbox_background_normal);
+    	password_unused.setBackgroundResource(android.R.drawable.editbox_background_normal);
 		
 		Button btn = (Button) findViewById(R.id.signin);
-		btn.setPadding(v_margin, h_margin, v_margin, h_margin);
 		btn.setOnClickListener(new View.OnClickListener() {
 		    @Override
 		    public void onClick(View v) {
 			    try {
-			    	// Actual user input values.
-//					EditText email = (EditText) findViewById(R.id.email);
-//			    	EditText password = (EditText) findViewById(R.id.password);
-					
-					String url = "https://www.orangeseven7.com/rest_sign_in?";
-					String email = "happiness@gmail.com";
-					String password = "happiness1";
+			    	String url = "https://daapr.com/rest_sign_in?";
+					String email = "test@example.com";
+					String password = "testing123";
 					List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
 			        urlParams.add(new BasicNameValuePair("email", email));
 			    	urlParams.add(new BasicNameValuePair("password", password));
 			    	if (availableConnection()) { System.out.println("There is an available network connection!"); }
 			    	else { System.out.println("No network connection!!"); }
-			    	if (isInternetAvailable()) { System.out.println("Connected to the internet!"); }
-			    	else { System.out.println("Something went wrong with the internet connection"); }
+//			    	if (isInternetAvailable()) { System.out.println("Connected to the internet!"); }
+//			    	else { System.out.println("Something went wrong with the internet connection"); }
 			    	new SignInTask().execute(url, urlParams);
 				} catch (Exception e) {
 					System.out.println("Sign in failed!");
@@ -127,8 +119,8 @@ public class SignIn extends Activity {
 	        tv1.setText(result);
 	        
 	        api_key = result;
-//	        if (api_key != null && api_key.indexOf("error") == -1) { signIn(); }
-	        signIn();
+	        if (api_key != null && api_key.indexOf("error") == -1) { signIn(); }
+//	        signIn();
 	    }
 	}
 	

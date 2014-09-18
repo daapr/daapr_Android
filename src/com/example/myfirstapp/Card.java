@@ -1,14 +1,21 @@
 package com.example.myfirstapp;
 
+import java.io.InputStream;
+import java.net.URL;
+
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.RelativeLayout.LayoutParams;
@@ -19,15 +26,15 @@ public class Card extends Activity {
     //#10-reshare_id, 11-micropost_user_id, 12-like_num, 13-current_user_liked, 14-reshare_num,
 	// 15-current_user_reshared, 16-caption, 17-comment_num, 18-?, 19-?, 20-micropost_description
 	private int micropost_id;
-	private String url;
-	private String title;
+	public String url;
+	public String title;
 	private String image_url;
 	private String video_url;
-	private String site_name;
+	public String site_name;
 	private int reshare_user_id;
-	private String micropost_user_name;
+	public String micropost_user_name;
 	private String reshare_user_name;
-	private String reshare_created_at;
+	public String reshare_created_at;
 	private int reshare_id;
 	private int micropost_user_id;
 	private int like_num;
@@ -39,7 +46,30 @@ public class Card extends Activity {
 	private String micropost_description;
 	final RelativeLayout layout;
 	
-	public Card(Context c, int id, int title_id, int source_id, int user_id, int time) {
+	public ImageView card_image;
+	public Drawable image_drawable;
+//	public boolean finished_loading_images = false;
+	
+	static int CARD_WIDTH = 200;
+	static int MP = LayoutParams.MATCH_PARENT;
+	static int WP = LayoutParams.WRAP_CONTENT;
+	
+	public Card(Context c, Object result, int id) {
+		System.out.println("IN CARD CLASS!!!");
+		
+		Object[] card_array = (Object[]) result;
+		int title_id = (id + 1) * 10;
+		int source_id = title_id * 10;
+		int user_id = source_id * 10;
+		int time_id = user_id * 10;
+		
+    	image_url = (String) card_array[3];
+        site_name = (String) card_array[5];
+        url = (String) card_array[1];
+        new LoadImageTask().execute();
+//        while (!finished_loading_images) {System.out.print("still loading images...");}
+
+		
 		// Background color and margins
     	this.layout = new RelativeLayout(c);
     	LayoutParams lp_card = (LayoutParams) new RelativeLayout.LayoutParams(Feed.WP,
@@ -48,9 +78,10 @@ public class Card extends Activity {
     	layout.setBackgroundColor(c.getResources().getColor(R.color.white));
 
         // Image that goes  on card
-    	ImageView card_image = new ImageView(c);
+    	card_image = new ImageView(c);
+    	card_image.setImageDrawable(image_drawable);
     	// Replace i with actual Id!
-    	card_image.setId(id);
+    	card_image.setId(id + 1);
         card_image.setImageResource(R.drawable.wieber);
         card_image.setScaleType(ImageView.ScaleType.CENTER_CROP);
         LayoutParams lp_card_image = (LayoutParams) new RelativeLayout.LayoutParams(Feed.CARD_WIDTH, Feed.CARD_WIDTH);
@@ -60,14 +91,15 @@ public class Card extends Activity {
     	card_image.setContentDescription("Jordyn Wieber wins gold!");
     	
         // Title text
+    	title = (String) card_array[2];
     	TextView title_tv = new TextView(c);
     	title_tv.setId(title_id);
     	LayoutParams lp_title = (LayoutParams) new RelativeLayout.LayoutParams(Feed.WP, Feed.WP);
     	title_tv.setLayoutParams(lp_title);
         title_tv.setTextColor(c.getResources().getColor(R.color.daapr_blue));
-        Spannable title_text = new SpannableString("Sample Title: World Champion Wieber");
-        title_text.setSpan(new RelativeSizeSpan(1f), 0, title_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        title_tv.setText(title_text);
+//        Spannable title_text = new SpannableString("Sample Title: World Champion Wieber");
+//        title_text.setSpan(new RelativeSizeSpan(1f), 0, title_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        title_tv.setText(title);//_text);
         lp_title.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         lp_title.addRule(RelativeLayout.RIGHT_OF, card_image.getId());
         
@@ -76,14 +108,15 @@ public class Card extends Activity {
         source_tv.setId(source_id);
         LayoutParams lp_source = (LayoutParams) new RelativeLayout.LayoutParams(Feed.WP, Feed.WP);
     	source_tv.setLayoutParams(lp_source);
-    	Spannable source_text = new SpannableString("Sample Source: USA Gymnastics");
-        source_text.setSpan(new RelativeSizeSpan(0.8f), 0, source_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+//    	Spannable source_text = new SpannableString("Sample Source: USA Gymnastics");
+//        source_text.setSpan(new RelativeSizeSpan(0.8f), 0, source_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         source_tv.setTextColor(c.getResources().getColor(R.color.source_gray));
-        source_tv.setText(source_text);
+        source_tv.setText(site_name);
         lp_source.addRule(RelativeLayout.BELOW, title_tv.getId());
         lp_source.addRule(RelativeLayout.ALIGN_LEFT, title_tv.getId());
         
         // User text
+        micropost_user_name = (String) card_array[7];
         TextView user_tv = new TextView(c);
         user_tv.setId(user_id);
         LayoutParams lp_user = (LayoutParams) new RelativeLayout.LayoutParams(Feed.WP, Feed.WP);
@@ -97,14 +130,15 @@ public class Card extends Activity {
         lp_user.addRule(RelativeLayout.BELOW, source_tv.getId());
         
         // Time stamp text
+        reshare_created_at = (String) card_array[9];
         TextView time_tv = new TextView(c);
-        time_tv.setId(time);
+        time_tv.setId(time_id);
         LayoutParams lp_time = (LayoutParams) new RelativeLayout.LayoutParams(Feed.WP, Feed.WP);
     	time_tv.setLayoutParams(lp_time);
-    	Spannable time_text = new SpannableString("4 months ago");
-        time_text.setSpan(new RelativeSizeSpan(0.8f), 0, time_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+//    	Spannable time_text = new SpannableString("4 months ago");
+//        time_text.setSpan(new RelativeSizeSpan(0.8f), 0, time_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         time_tv.setTextColor(c.getResources().getColor(R.color.daapr_gray));
-        time_tv.setText(time_text);
+        time_tv.setText(reshare_created_at);
         lp_time.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         lp_time.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         
@@ -115,20 +149,36 @@ public class Card extends Activity {
         layout.addView(time_tv);
 	}
 	
-	public class CardAdapter extends ArrayAdapter {
-		public CardAdapter(Context context, int resource, int textViewResourceId) {
-			super(context, resource, textViewResourceId);
-		}
+	/** Load an image from url and set the source name of the url to be srcName. */
+	public static Drawable loadImage(String url, String srcName) {
+	    try {
+	        InputStream is = (InputStream) new URL(url).getContent();
+	        Drawable d = Drawable.createFromStream(is, srcName);
+	        return d;
+	    } catch (Exception e) {
+	    	System.out.println("Error: In loadImage");
+	    	e.printStackTrace();
+	        return null;
+	    }
+	}
+	
+	/** Asynchronous task that loads images. */
+	class LoadImageTask extends AsyncTask<Void, Void, Drawable> {
 
-		int count = 20; /* starting amount */
+	    protected Drawable doInBackground(Void... params) {
+	        try {
+	        	System.out.println("Image url is: " + image_url);
+	        	return loadImage(image_url, site_name);
+	        } catch (Exception e) {
+	        	System.out.println("Error: In LoadImageTask");
+	            e.printStackTrace();
+	            return null;
+	        }
+	    }
 
-	    public int getCount() { return count; }
-	    public Object getItem(int pos) { return pos; }
-	    public long getItemId(int pos) { return pos; }
-
-	    public View getView(int pos, View v, ViewGroup p) {
-	            Card card = new Card(getApplicationContext(), pos, pos, pos, pos, pos);
-	            return card.layout;
+	    protected void onPostExecute(Drawable image) {
+	    	image_drawable = image;
+//	    	finished_loading_images = true;
 	    }
 	}
 }

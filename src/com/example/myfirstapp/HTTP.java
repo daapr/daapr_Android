@@ -1,10 +1,16 @@
 package com.example.myfirstapp;
 import android.annotation.SuppressLint;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -14,12 +20,18 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONTokener;
 
 
 public class HTTP {
@@ -103,8 +115,10 @@ public class HTTP {
 	
 	/** Returns an array of the feed items by sending an Http POST request. See example at
 	 *  http://stackoverflow.com/questions/18651641/how-to-put-http-response-into-array-in-android. */
+	@SuppressWarnings("null")
 	@SuppressLint("NewApi")
 	public static Object[] append_feed(String path, List<BasicNameValuePair> urlParams) {
+		System.out.println("In append_feed()");
 		HttpResponse response = null;
 	    HttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httppost = null;
@@ -113,7 +127,7 @@ public class HTTP {
 	    // Delete this. Dummy array.
 	    Object[] dummy = new Object[1];
 	    try {
-	        // Add the data
+	    	// Add the data
 	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 	        for (BasicNameValuePair data : urlParams) {
 	        	nameValuePairs.add(data);
@@ -125,11 +139,29 @@ public class HTTP {
 
 	        // Execute HTTP Post Request
 	    	response = httpclient.execute(httppost);
-	    	// Convert HttpResponse into Object array via JSON
-	    	JSONArray array = new JSONArray(response);
-	    	Object[] result = new Object[array.length()];
-	    	for (int i = 0; i < array.length(); i++){
-	    	    result[i] = array.get(i);
+	    	
+	    	System.out.println("About to convert Http response into outer array.");
+	    	// Code from http://stackoverflow.com/questions/2845599/how-do-i-parse-json-from-a-java-httpresponse
+	    	// Convert HTTP response into JSONArray
+	    	BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+	    	StringBuilder builder = new StringBuilder();
+	    	for (String line = null; (line = reader.readLine()) != null;) {
+	    	    builder.append(line).append("\n");
+	    	}
+	    	JSONTokener tokener = new JSONTokener(builder.toString());
+//	    	System.out.println(tokener);
+	    	JSONArray outerArray = new JSONArray(tokener);
+	    	
+	    	System.out.println("About to create inner array");
+	    	// Convert JSONArray into array
+	    	Object[][] result = new Object[outerArray.length()][];
+	    	for (int i = 0; i < outerArray.length(); i++){
+	    		JSONArray innerArray = outerArray.getJSONArray(i);
+		        Object[] innerResult = new Object[innerArray.length()];
+		        for(int j = 0; j < innerArray.length(); j++){               
+		            innerResult[j] = innerArray.get(j);               
+		        }
+		        result[i] = innerResult;
 	    	}
 	    	return result;
 	        
@@ -138,9 +170,12 @@ public class HTTP {
 	    	System.out.println("http code is " + response.getStatusLine().toString());
 	    	return dummy;
 	    } catch (IOException e) {
+	    	System.out.println("IN IOEXCEPTION");
 	    	e.printStackTrace();
 	    	return dummy;
-	    } catch (JSONException e) {
+	    } 
+	    catch (JSONException e) {
+	    	System.out.println("IN JSONEXCEPTION");
 			e.printStackTrace();
 			return dummy;
 		}

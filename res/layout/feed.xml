@@ -1,26 +1,13 @@
-<!-- ListView xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:tools="http://schemas.android.com/tools"
-	tools:context="com.example.myfirstapp.MainActivity$PlaceholderFragment"
-	android:id="@+id/feed"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:orientation="vertical" >
-	<TextView
-	    android:id="@+id/dummytv"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent" >
-	</TextView>
-</ListView-->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-   android:layout_width="match_parent"
-   android:layout_height="match_parent" 
-   xmlns:tools="http://schemas.android.com/tools"
-   tools:context="com.example.myfirstapp.MainActivity$PlaceholderFragment"
-   android:isScrollContainer="true">
-   <LinearLayout
-        android:id="@+id/feed"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="vertical">
-   </LinearLayout>
-</ScrollView>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/feed"
+	android:orientation="vertical" 
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF" > 
+
+    <ListView
+	    android:id="@+id/feed_list"
+   		android:layout_width="fill_parent"
+    	android:layout_height="fill_parent" />
+ </LinearLayout>

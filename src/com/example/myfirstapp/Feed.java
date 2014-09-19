@@ -52,6 +52,10 @@ public class Feed extends ActionBarActivity {
 	Context context;
 	int initial_feed_length = 20;
 	String url = "https://daapr.com/rest_append_feed?";
+//    ArrayList<Card> card_data = new ArrayList<Card>();
+    ListView feed_listview;
+    CardAdapter adapter;
+    int id = 0; // FIX. temporary id for cards.
 
 	
     @SuppressLint({ "SimpleDateFormat", "NewApi" })
@@ -64,6 +68,7 @@ public class Feed extends ActionBarActivity {
         context = this;
         
         api_key = getIntent().getStringExtra("API_KEY");
+        feed_listview = (ListView)findViewById(R.id.feed_list);
         updateParams(current_length, last_time_synchronized);
     }
     
@@ -175,13 +180,15 @@ public class Feed extends ActionBarActivity {
 	    }
 
 	    protected void onPostExecute(Object[] result) {
-	    	System.out.println("In onPostExecute for Feed");
-	    	
-	    	final ListView feed_listview = (ListView)findViewById(R.id.feed_list);
-	        Card card_data[] = new Card[result.length];
+	    	ArrayList<Card> card_data = new ArrayList<Card>();
+//	    	ListView feed_listview = (ListView)findViewById(R.id.feed_list);
         	// Loop through result array to initialize all Cards
         	for (int i = 0; i < result.length; i++) {
-        		card_data[i] = new Card(getApplicationContext(), result[i], i);
+//        		System.out.println("LENGTH OF ARRAY = " + result.length);
+        		Card card = new Card(getApplicationContext(), result[i], id);
+        		System.out.println("TITLE OF CARD IS " + card.title);
+        		card_data.add(card);
+        		id++;
         		
         		// The below code isn't registering for some reason...
 //        		final RelativeLayout card_layout = card_data[i].layout;
@@ -198,8 +205,13 @@ public class Feed extends ActionBarActivity {
 //                });
         	}
         	// Adapt cards to views to be put in the listview
-	        final CardAdapter adapter = new CardAdapter(context, R.layout.listview_card, card_data);
-	        feed_listview.setAdapter(adapter);
+	        if (feed_listview.getAdapter() == null) {
+	            adapter = new CardAdapter(context, R.layout.listview_card, card_data);
+		        feed_listview.setAdapter(adapter);
+	        } else {
+	        	adapter.updateData(card_data);
+		        adapter.notifyDataSetChanged(); //USELESS?? :(
+	        }
 	        feed_listview.setOnScrollListener(new AbsListView.OnScrollListener() {
 	        	@Override
 	            public void onScroll(AbsListView view, int firstVisible, int visibleCount, int totalCount) {
@@ -207,8 +219,9 @@ public class Feed extends ActionBarActivity {
 	                    firstVisible + visibleCount >= totalCount - 5;
 	                if(loadMore) {
 	                	current_length += adapter.count;
-	                    adapter.count += visibleCount; // or any other amount
-	                    adapter.notifyDataSetChanged();
+	                    adapter.count += visibleCount;
+	                    System.out.println("TOTAL ADAPTER COUNT = " + adapter.getCount());
+	                    ((CardAdapter) feed_listview.getAdapter()).notifyDataSetChanged();
 	                    updateParams(current_length, last_time_synchronized);
 	                }
 	            }
@@ -231,8 +244,7 @@ public class Feed extends ActionBarActivity {
 			        i.setData(Uri.parse(url));
 			        startActivity(i);
 				}
-	        });
-	        
+	        });	        
 	        
 //	        feed_listview.invalidate();
 	    	

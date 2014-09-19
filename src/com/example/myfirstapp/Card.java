@@ -25,7 +25,7 @@ public class Card extends Activity {
 	// 7-micropost_user_name,8-reshare_user_name, 9-reshare_created_at
     //#10-reshare_id, 11-micropost_user_id, 12-like_num, 13-current_user_liked, 14-reshare_num,
 	// 15-current_user_reshared, 16-caption, 17-comment_num, 18-?, 19-?, 20-micropost_description
-	private int micropost_id;
+	public int micropost_id;
 	public String url;
 	public String title;
 	private String image_url;
@@ -44,109 +44,26 @@ public class Card extends Activity {
 	private String caption;
 	private int comment_num;
 	private String micropost_description;
-	final RelativeLayout layout;
 	
 	public ImageView card_image;
 	public Drawable image_drawable;
-//	public boolean finished_loading_images = false;
 	
 	static int CARD_WIDTH = 200;
 	static int MP = LayoutParams.MATCH_PARENT;
 	static int WP = LayoutParams.WRAP_CONTENT;
 	
 	public Card(Context c, Object result, int id) {
-		System.out.println("IN CARD CLASS!!!");
-		
+//		System.out.println("CARD ID IS " + id);
 		Object[] card_array = (Object[]) result;
-		int title_id = (id + 1) * 10;
-		int source_id = title_id * 10;
-		int user_id = source_id * 10;
-		int time_id = user_id * 10;
 		
+		micropost_id = (Integer) card_array[0];
     	image_url = (String) card_array[3];
         site_name = (String) card_array[5];
         url = (String) card_array[1];
-        new LoadImageTask().execute();
-//        while (!finished_loading_images) {System.out.print("still loading images...");}
-
-		
-		// Background color and margins
-    	this.layout = new RelativeLayout(c);
-    	LayoutParams lp_card = (LayoutParams) new RelativeLayout.LayoutParams(Feed.WP,
-    			Feed.WP);
-    	layout.setLayoutParams(lp_card);
-    	layout.setBackgroundColor(c.getResources().getColor(R.color.white));
-
-        // Image that goes  on card
-    	card_image = new ImageView(c);
-    	card_image.setImageDrawable(image_drawable);
-    	// Replace i with actual Id!
-    	card_image.setId(id + 1);
-        card_image.setImageResource(R.drawable.wieber);
-        card_image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        LayoutParams lp_card_image = (LayoutParams) new RelativeLayout.LayoutParams(Feed.CARD_WIDTH, Feed.CARD_WIDTH);
-    	card_image.setLayoutParams(lp_card_image);
-    	lp_card_image.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-    	lp_card_image.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-    	card_image.setContentDescription("Jordyn Wieber wins gold!");
-    	
-        // Title text
     	title = (String) card_array[2];
-    	TextView title_tv = new TextView(c);
-    	title_tv.setId(title_id);
-    	LayoutParams lp_title = (LayoutParams) new RelativeLayout.LayoutParams(Feed.WP, Feed.WP);
-    	title_tv.setLayoutParams(lp_title);
-        title_tv.setTextColor(c.getResources().getColor(R.color.daapr_blue));
-//        Spannable title_text = new SpannableString("Sample Title: World Champion Wieber");
-//        title_text.setSpan(new RelativeSizeSpan(1f), 0, title_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        title_tv.setText(title);//_text);
-        lp_title.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        lp_title.addRule(RelativeLayout.RIGHT_OF, card_image.getId());
-        
-        // Source text
-        TextView source_tv = new TextView(c);
-        source_tv.setId(source_id);
-        LayoutParams lp_source = (LayoutParams) new RelativeLayout.LayoutParams(Feed.WP, Feed.WP);
-    	source_tv.setLayoutParams(lp_source);
-//    	Spannable source_text = new SpannableString("Sample Source: USA Gymnastics");
-//        source_text.setSpan(new RelativeSizeSpan(0.8f), 0, source_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        source_tv.setTextColor(c.getResources().getColor(R.color.source_gray));
-        source_tv.setText(site_name);
-        lp_source.addRule(RelativeLayout.BELOW, title_tv.getId());
-        lp_source.addRule(RelativeLayout.ALIGN_LEFT, title_tv.getId());
-        
-        // User text
-        micropost_user_name = (String) card_array[7];
-        TextView user_tv = new TextView(c);
-        user_tv.setId(user_id);
-        LayoutParams lp_user = (LayoutParams) new RelativeLayout.LayoutParams(Feed.WP, Feed.WP);
-    	user_tv.setLayoutParams(lp_user);
-    	Spannable user_text = new SpannableString("Mckayla Maroney");
-        user_text.setSpan(new RelativeSizeSpan(0.8f), 0, user_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        user_tv.setTextColor(c.getResources().getColor(R.color.daapr_blue));
-        user_tv.setText(user_text);
-        lp_user.setMargins(0, 20, 0, 0);
-        lp_user.addRule(RelativeLayout.ALIGN_LEFT, source_tv.getId());
-        lp_user.addRule(RelativeLayout.BELOW, source_tv.getId());
-        
-        // Time stamp text
         reshare_created_at = (String) card_array[9];
-        TextView time_tv = new TextView(c);
-        time_tv.setId(time_id);
-        LayoutParams lp_time = (LayoutParams) new RelativeLayout.LayoutParams(Feed.WP, Feed.WP);
-    	time_tv.setLayoutParams(lp_time);
-//    	Spannable time_text = new SpannableString("4 months ago");
-//        time_text.setSpan(new RelativeSizeSpan(0.8f), 0, time_text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        time_tv.setTextColor(c.getResources().getColor(R.color.daapr_gray));
-        time_tv.setText(reshare_created_at);
-        lp_time.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        lp_time.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        
-        layout.addView(card_image);
-        layout.addView(title_tv);
-        layout.addView(source_tv);
-        layout.addView(user_tv);
-        layout.addView(time_tv);
+        micropost_user_name = (String) card_array[7];
+        new LoadImageTask().execute();
 	}
 	
 	/** Load an image from url and set the source name of the url to be srcName. */
@@ -167,7 +84,7 @@ public class Card extends Activity {
 
 	    protected Drawable doInBackground(Void... params) {
 	        try {
-	        	System.out.println("Image url is: " + image_url);
+//	        	System.out.println("Image url is: " + image_url);
 	        	return loadImage(image_url, site_name);
 	        } catch (Exception e) {
 	        	System.out.println("Error: In LoadImageTask");
@@ -178,7 +95,6 @@ public class Card extends Activity {
 
 	    protected void onPostExecute(Drawable image) {
 	    	image_drawable = image;
-//	    	finished_loading_images = true;
 	    }
 	}
 }

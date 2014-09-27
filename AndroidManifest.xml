@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.myfirstapp"
+    package="com.example.daapr"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="16"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="20" />
 
     
     <!--  Internet Permissions -->
@@ -15,11 +15,11 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/appicon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.myfirstapp.SignIn"
+            android:name="com.example.daapr.SignIn"
             android:label="@string/app_name" 
             android:configChanges="keyboard|keyboardHidden|orientation|uiMode|screenLayout"
             android:alwaysRetainTaskState="true" >
@@ -31,13 +31,13 @@
         </activity>
         
         <activity
-            android:name="com.example.myfirstapp.Feed"
+            android:name="com.example.daapr.Feed"
             android:label="@string/app_name" 
-            android:parentActivityName="com.example.myfirstapp.SignIn"
+            android:parentActivityName="com.example.daapr.SignIn"
             
             >
             <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.myfirstapp.SignIn" />
+                android:value="com.example.daapr.SignIn" />
             <intent-filter>
                 <action android:name="android.intent.action.FEED" />
 
@@ -46,12 +46,12 @@
         </activity>
         
         <activity
-            android:name="com.example.myfirstapp.Profile"
+            android:name="com.example.daapr.Profile"
             android:label="@string/app_name" 
-            android:parentActivityName="com.example.myfirstapp.Feed"
+            android:parentActivityName="com.example.daapr.Feed"
             >
             <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.myfirstapp.Feed" />
+                android:value="com.example.daapr.Feed" />
             <intent-filter>
                 <action android:name="android.intent.action.PROFILE" />
 
@@ -60,12 +60,12 @@
         </activity>
         
         <activity
-            android:name="com.example.myfirstapp.Followers"
+            android:name="com.example.daapr.Followers"
             android:label="@string/app_name"
-            android:parentActivityName="com.example.myfirstapp.Profile"
+            android:parentActivityName="com.example.daapr.Profile"
             >
             <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.myfirstapp.Profile" />
+                android:value="com.example.daapr.Profile" />
             <intent-filter>
                 <action android:name="android.intent.category.FOLLOWERS" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -73,12 +73,12 @@
         </activity>
         
         <activity
-            android:name="com.example.myfirstapp.Following"
+            android:name="com.example.daapr.Following"
             android:label="@string/app_name"
-            android:parentActivityName="com.example.myfirstapp.Profile"
+            android:parentActivityName="com.example.daapr.Profile"
             >
             <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.myfirstapp.Profile" />
+                android:value="com.example.daapr.Profile" />
             <intent-filter>
                 <action android:name="android.intent.category.FOLLOWING" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -86,12 +86,12 @@
         </activity>
         
         <activity
-            android:name="com.example.myfirstapp.Notifications"
+            android:name="com.example.daapr.Notifications"
             android:label="@string/app_name"
-            android:parentActivityName="com.example.myfirstapp.Feed"
+            android:parentActivityName="com.example.daapr.Feed"
             >
             <meta-data android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.myfirstapp.Feed" />
+                android:value="com.example.daapr.Feed" />
             <intent-filter>
                 <action android:name="android.intent.category.NOTIFICATIONS" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -99,13 +99,13 @@
         </activity>
         
         <activity
-            android:name="com.example.myfirstapp.Settings"
+            android:name="com.example.daapr.Settings"
             android:label="@string/action_settings"
             >
         </activity>
             
     	<activity
-    	    android:name="com.example.myfirstapp.DiscoverUsers"
+    	    android:name="com.example.daapr.DiscoverUsers"
             android:label="@string/discover_users"
         >
     	</activity>

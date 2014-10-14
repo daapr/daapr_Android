@@ -1,16 +1,13 @@
 package com.example.daapr;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
-public class Notifications extends ActionBarActivity {
+public class Notifications extends Activity {
   
 	
 	@Override
@@ -39,7 +36,7 @@ public class Notifications extends ActionBarActivity {
         //make visible to program
         setContentView(linearLayout);
         
-        ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 	}
 	

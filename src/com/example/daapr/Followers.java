@@ -1,9 +1,9 @@
 package com.example.daapr;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 
-public class Followers extends ActionBarActivity {
+public class Followers extends Activity {
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {

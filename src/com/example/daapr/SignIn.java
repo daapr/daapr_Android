@@ -32,6 +32,7 @@ import android.text.style.RelativeSizeSpan;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -87,6 +88,7 @@ public class SignIn extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.signin);
 		
 		LoginButton authButton = (LoginButton) findViewById(R.id.authButton);
@@ -139,10 +141,10 @@ public class SignIn extends Activity {
 		// Actual user input values.
     	EditText email_unused = (EditText) findViewById(R.id.username_et);
     	EditText password_unused = (EditText) findViewById(R.id.password_et);
-    	if (email_unused == null) { System.out.println("SOMETHING IS WRONG...why is it null?"); }
-    	email_unused.setBackgroundResource(android.R.drawable.editbox_background_normal);
-    	password_unused.setBackgroundResource(android.R.drawable.editbox_background_normal);
-		
+//    	if (email_unused == null) { System.out.println("SOMETHING IS WRONG...why is it null?"); }
+//    	email_unused.setBackgroundResource(android.R.drawable.editbox_background_normal);
+//    	password_unused.setBackgroundResource(android.R.drawable.editbox_background_normal);
+//		
 		Button btn = (Button) findViewById(R.id.signin);
 		btn.setOnClickListener(new View.OnClickListener() {
 		    @Override

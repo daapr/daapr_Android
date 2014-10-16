@@ -73,7 +73,7 @@ public class HTTP {
 	
 	/** Sends an Http POST request given the source path and urlParams. See example at
 	 *  http://stackoverflow.com/questions/2938502/sending-post-data-in-android. Uses Apache. */
-	public static String postData(String path, List<BasicNameValuePair> urlParams) {
+	public static String sign_in(String path, List<BasicNameValuePair> urlParams) {
 		HttpResponse response = null;
 	    HttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httppost = null;
@@ -115,10 +115,8 @@ public class HTTP {
 	
 	/** Returns an array of the feed items by sending an Http POST request. See example at
 	 *  http://stackoverflow.com/questions/18651641/how-to-put-http-response-into-array-in-android. */
-	@SuppressWarnings("null")
 	@SuppressLint("NewApi")
 	public static Object[] append_feed(String path, List<BasicNameValuePair> urlParams) {
-		System.out.println("In append_feed()");
 		HttpResponse response = null;
 	    HttpClient httpclient = new DefaultHttpClient();
 	    HttpPost httppost = null;
@@ -140,7 +138,6 @@ public class HTTP {
 	        // Execute HTTP Post Request
 	    	response = httpclient.execute(httppost);
 	    	
-	    	System.out.println("About to convert Http response into outer array.");
 	    	// Code from http://stackoverflow.com/questions/2845599/how-do-i-parse-json-from-a-java-httpresponse
 	    	// Convert HTTP response into JSONArray
 	    	BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
@@ -149,10 +146,8 @@ public class HTTP {
 	    	    builder.append(line).append("\n");
 	    	}
 	    	JSONTokener tokener = new JSONTokener(builder.toString());
-//	    	System.out.println(tokener);
 	    	JSONArray outerArray = new JSONArray(tokener);
 	    	
-	    	System.out.println("About to create inner array");
 	    	// Convert JSONArray into array
 	    	Object[][] result = new Object[outerArray.length()][];
 	    	for (int i = 0; i < outerArray.length(); i++){
@@ -170,16 +165,13 @@ public class HTTP {
 	    	System.out.println("http code is " + response.getStatusLine().toString());
 	    	return dummy;
 	    } catch (IOException e) {
-	    	System.out.println("IN IOEXCEPTION");
+	    	System.out.println("In ioexception for append_feed");
 	    	e.printStackTrace();
 	    	return dummy;
 	    } 
 	    catch (JSONException e) {
-	    	System.out.println("IN JSONEXCEPTION");
 			e.printStackTrace();
 			return dummy;
 		}
 	}
-
-	
 }

@@ -40,7 +40,7 @@ public class Feed extends Activity {
 //    ArrayList<Card> card_data = new ArrayList<Card>();
     ListView feed_listview;
     CardAdapter adapter;
-    int id = 0; // FIX. temporary id for cards.
+    int id = 0; // FIX. temporary id for cards. Not needed?
 
 	
     @SuppressLint({ "SimpleDateFormat", "NewApi" })
@@ -170,10 +170,10 @@ public class Feed extends Activity {
         	// Loop through result array to initialize all Cards
         	for (int i = 0; i < result.length; i++) {
 //        		System.out.println("LENGTH OF ARRAY = " + result.length);
-        		Card card = new Card(getApplicationContext(), result[i], id);
+        		Card card = new Card(getApplicationContext(), result[i]);
         		System.out.println("TITLE OF CARD IS " + card.title);
         		card_data.add(card);
-        		id++;
+//        		id++; // Use only if unique id is needed for each card
         		
         		// The below code isn't registering for some reason...
 //        		final RelativeLayout card_layout = card_data[i].layout;

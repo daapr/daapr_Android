@@ -47,8 +47,8 @@ public class CardAdapter extends ArrayAdapter<Card> {
         View row = convertView;
         CardHolder holder = null;
         Card card = data.get(position);
-        System.out.println("CURRENT POSITION IS " + position);
-        System.out.println("NEW title SHOULD be " + card.title);
+//        System.out.println("CURRENT POSITION IS " + position);
+//        System.out.println("NEW title SHOULD be " + card.title);
         
         if(row == null)
         {
@@ -57,9 +57,9 @@ public class CardAdapter extends ArrayAdapter<Card> {
             
             holder = new CardHolder();
             holder.iv = (ImageView)row.findViewById(R.id.card_image);
-//            System.out.println("Id of image: " + card.card_image.getId());
             if (card.image_drawable == null) {
             	System.out.println("Image " + position + " is null!! Replacing with Wieber");
+            	// Use default picture when the actual image has not downloaded yet
             	holder.iv.setImageResource(R.drawable.wieber);
             } else {
             	holder.iv.setImageDrawable(card.image_drawable);
@@ -72,7 +72,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
             holder.tv_source.setText(card.site_name);
             holder.tv_user = (TextView)row.findViewById(R.id.user);
             holder.tv_user.setTextColor(context.getResources().getColor(R.color.daapr_blue));
-            holder.tv_user.setText(card.micropost_user_name);
+            holder.tv_user.setText(card.reshare_user_name);
             holder.tv_time = (TextView)row.findViewById(R.id.time);
             holder.tv_time.setText(card.reshare_created_at);
             row.setTag(holder);

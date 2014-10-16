@@ -41,12 +41,12 @@ public class FbFragment extends Fragment {
 	private UiLifecycleHelper uiHelper;
 	String api_key;
 	
-//	// Returns if a network connection is available.
-//	public boolean availableConnection() {
-//	    ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-//	    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-//	    return (networkInfo != null && networkInfo.isConnected()); // fetch data if true; else display error
-//	}
+	// Returns if a network connection is available.
+	public boolean availableConnection() {
+	    ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+	    return (networkInfo != null && networkInfo.isConnected()); // fetch data if true; else display error
+	}
 
 	private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
 	    @Override
@@ -106,34 +106,36 @@ public class FbFragment extends Fragment {
 	        Bundle savedInstanceState) {
 	    View view = inflater.inflate(R.layout.signin, container, false);
 	    
-//	    // Actual user input values.
-//    	EditText email_unused = (EditText) getActivity().findViewById(R.id.username_et);
-//    	EditText password_unused = (EditText) getActivity().findViewById(R.id.password_et);
-//    	email_unused.setBackgroundResource(android.R.drawable.editbox_background_normal);
-//    	password_unused.setBackgroundResource(android.R.drawable.editbox_background_normal);
-//		
-//		Button btn = (Button) getActivity().findViewById(R.id.signin);
-//		btn.setOnClickListener(new View.OnClickListener() {
-//		    @Override
-//		    public void onClick(View v) {
-//		    	System.out.println("IN ON CLICK FOR SIGN IN");
-//			    try {
-//			    	String url = "https://daapr.com/rest_sign_in?";
-//					String email = "test@example.com";
-//					String password = "testing123";
-//					List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
-//			        urlParams.add(new BasicNameValuePair("email", email));
-//			    	urlParams.add(new BasicNameValuePair("password", password));
-//			    	if (availableConnection()) { System.out.println("There is an available network connection!"); }
-//			    	else { System.out.println("No network connection!!"); }
-//			    	new SignInTask().execute(url, urlParams);
-//				} catch (Exception e) {
-//					System.out.println("Sign in failed!");
-//					e.printStackTrace();
-//				}
-//		    }
-//		});
-//	    
+	    // Actual user input values.
+    	final EditText email_et = (EditText) view.findViewById(R.id.username_et);
+    	final EditText password_et = (EditText) view.findViewById(R.id.password_et);
+		Button btn = (Button) view.findViewById(R.id.signin);
+		btn.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View v) {
+		    	System.out.println("IN ON CLICK FOR SIGN IN in fragment onCreateView");
+			    try {
+			    	String url = "https://daapr.com/rest_sign_in?";
+					String email = "test@example.com";
+					String password = "testing123";
+			    	// Replace with below code when using the actual user's inputs
+//			    	String email = email_et.getText().toString();
+//			    	String password = password_et.getText().toString();
+			    	System.out.println("Email is " + email); 
+			    	System.out.println("Password is " + password);
+					List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
+			        urlParams.add(new BasicNameValuePair("email", email));
+			    	urlParams.add(new BasicNameValuePair("password", password));
+			    	if (availableConnection()) { System.out.println("There is an available network connection!"); }
+			    	else { System.out.println("No network connection!!"); }
+			    	new SignInTask().execute(url, urlParams);
+				} catch (Exception e) {
+					System.out.println("Sign in failed!");
+					e.printStackTrace();
+				}
+		    }
+		});
+	    
 		userInfoTextView = (TextView) view.findViewById(R.id.userInfoTextView);
 	    LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
 	    authButton.setFragment(this);
@@ -200,7 +202,7 @@ public class FbFragment extends Fragment {
 	    return userInfo.toString();
 	}
 	
-	/** Called when the user clicks the Facebook Login button */
+	/** Called when the user clicks the Sign In button or the Facebook Login button */
 	public void signIn() {
 		Intent feed = new Intent(getActivity(), Feed.class);
 		feed.putExtra("API_KEY", api_key);
@@ -225,5 +227,4 @@ public class FbFragment extends Fragment {
 	        if (api_key != null && api_key.indexOf("error") == -1) { signIn(); }
 	    }
 	}
-	
 }

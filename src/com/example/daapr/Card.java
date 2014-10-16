@@ -23,7 +23,7 @@ public class Card extends Activity {
 	public String site_name;
 	private int reshare_user_id;
 	public String micropost_user_name;
-	private String reshare_user_name;
+	public String reshare_user_name;
 	public String reshare_created_at;
 	private int reshare_id;
 	private int micropost_user_id;
@@ -42,7 +42,7 @@ public class Card extends Activity {
 	static int MP = LayoutParams.MATCH_PARENT;
 	static int WP = LayoutParams.WRAP_CONTENT;
 	
-	public Card(Context c, Object result, int id) {
+	public Card(Context c, Object result) {
 //		System.out.println("CARD ID IS " + id);
 		Object[] card_array = (Object[]) result;
 		
@@ -53,6 +53,7 @@ public class Card extends Activity {
     	title = (String) card_array[2];
         reshare_created_at = (String) card_array[9];
         micropost_user_name = (String) card_array[7];
+        reshare_user_name = (String) card_array[8];
         new LoadImageTask().execute();
 	}
 	

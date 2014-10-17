@@ -6,6 +6,13 @@
     android:layout_height="fill_parent"
     android:background="#FFFFFF" > 
 
+    <TextView
+	    android:id="@+id/feed_error_tv"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:visibility="invisible"
+	    android:textColor="@color/white" />
+    
     <ListView
 	    android:id="@+id/feed_list"
    		android:layout_width="fill_parent"

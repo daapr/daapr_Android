@@ -36,12 +36,11 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 
 public class FbFragment extends Fragment {
-	TextView userInfoTextView;
-	String fb_id, first_name, last_name, fb_email, fb_image;
-	private UiLifecycleHelper uiHelper;
-	String api_key;
+	String fb_id, first_name, last_name, fb_email, fb_image; // attributes needed for FB login
+	private UiLifecycleHelper uiHelper; // helps track session state changes
+	String api_key; // attribute needed for regular sign in
 	
-	// Returns if a network connection is available.
+	// Returns if a network connection is available. Used for debugging.
 	public boolean availableConnection() {
 	    ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -101,11 +100,9 @@ public class FbFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, 
-	        ViewGroup container, 
-	        Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
+	        						Bundle savedInstanceState) {
 	    View view = inflater.inflate(R.layout.signin, container, false);
-	    
 	    // Actual user input values.
     	final EditText email_et = (EditText) view.findViewById(R.id.username_et);
     	final EditText password_et = (EditText) view.findViewById(R.id.password_et);
@@ -121,51 +118,41 @@ public class FbFragment extends Fragment {
 			    	// Replace with below code when using the actual user's inputs
 //			    	String email = email_et.getText().toString();
 //			    	String password = password_et.getText().toString();
-			    	System.out.println("Email is " + email); 
-			    	System.out.println("Password is " + password);
 					List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
 			        urlParams.add(new BasicNameValuePair("email", email));
 			    	urlParams.add(new BasicNameValuePair("password", password));
-			    	if (availableConnection()) { System.out.println("There is an available network connection!"); }
-			    	else { System.out.println("No network connection!!"); }
 			    	new SignInTask().execute(url, urlParams);
 				} catch (Exception e) {
-					System.out.println("Sign in failed!");
 					e.printStackTrace();
 				}
 		    }
 		});
-	    
-		userInfoTextView = (TextView) view.findViewById(R.id.userInfoTextView);
 	    LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
+	    // Allow fragment to receive onActivityResult() call
 	    authButton.setFragment(this);
 	    authButton.setReadPermissions(Arrays.asList("email", "public_profile"));
-
 	    return view;
 	}
 	
 	/** Currently unused. Should return the user's Facebook profile picture as a bitmap given
 	 *  his or her userID. 
 	 * @throws IOException  */
+//	Bitmap bitmap = getFacebookProfilePicture(userId);
 	public static Bitmap getFacebookProfilePicture(String userID) throws IOException {
 	    URL imageURL = new URL("https://graph.facebook.com/" + userID + "/picture?type=large");
 	    Bitmap bitmap = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
-
 	    return bitmap;
 	}
-//	Bitmap bitmap = getFacebookProfilePicture(userId);
 	
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 		if (state.isOpened()) {
-	        userInfoTextView.setVisibility(View.VISIBLE);
 	        Request.newMeRequest(session, new Request.GraphUserCallback() {
 				@Override
 				public void onCompleted(GraphUser user, Response response) {
-					
 					if (user != null) {
-		                // Display the parsed user info
-		                userInfoTextView.setText(buildUserInfoDisplay(user));
-		                // All necessary user info has been set
+		                // Set necessary FB user info
+						buildUserInfo(user);
+						
 		                // Call rest_facebook_login
 		                String url = "https://orangeseven7.com/rest_facebook_login?";
 						List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
@@ -178,28 +165,20 @@ public class FbFragment extends Fragment {
 		            }
 				}
             }).executeAsync();
-	    } else if (state.isClosed()) {
-	        userInfoTextView.setVisibility(View.INVISIBLE);
+	    } else {
+	    	System.out.println("---State is closed---");
 	    }
 	}
 	
-	private String buildUserInfoDisplay(GraphUser user) {
-	    StringBuilder userInfo = new StringBuilder("");
-
-    	System.out.println("GETTING USER INFO!!");
+	private void buildUserInfo(GraphUser user) {
         fb_id = user.getId();
-        userInfo.append(String.format("Id: %s\n\n", fb_id));
         first_name = user.getFirstName();
-        userInfo.append(String.format("First name: %s\n\n", first_name));
         last_name = user.getLastName();
-        userInfo.append(String.format("Last name: %s\n\n", last_name));
         fb_email = (String) user.getProperty("email");
-        userInfo.append(String.format("Email: %s\n\n", fb_email));
         fb_image = "https://graph.facebook.com/" + fb_id + "/picture";
-        userInfo.append(String.format("Image URL: %s\n\n", fb_image));
+        // Remove when finished testing.
         System.out.println("USER INFO! ---> " + fb_id + "; " + first_name + "; " +
             last_name + "; " + fb_email + "; ");
-	    return userInfo.toString();
 	}
 	
 	/** Called when the user clicks the Sign In button or the Facebook Login button */
@@ -209,22 +188,27 @@ public class FbFragment extends Fragment {
 		startActivity(feed);
 	}
 	
-	private class SignInTask extends AsyncTask<Object, Void, String> {
+	private class SignInTask extends AsyncTask<Object, Void, Object[]> {
 	    @SuppressWarnings("unchecked")
-		protected String doInBackground(Object... params) {
+		protected Object[] doInBackground(Object... params) {
 	        return HTTP.sign_in((String) params[0],(List<BasicNameValuePair>) params[1]);
 	    }
 
-	    protected void onPostExecute(String result) {
+	    protected void onPostExecute(Object[] result) {
 	    	// tv1 appears after the signin button is released; for testing purposes
 			TextView tv1 = (TextView) getActivity().findViewById(R.id.testing);
-	        tv1.setTextColor(getResources().getColor(R.color.daapr_blue));
-	        Spannable title = new SpannableString(tv1.getText());
-	        title.setSpan(new RelativeSizeSpan(1f), 0, title.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-	        tv1.setText("api_key: " + result);
+//	        Spannable title = new SpannableString(tv1.getText());
+//	        title.setSpan(new RelativeSizeSpan(1f), 0, title.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+	        tv1.setText("api_key: " + result[1]);
 	        
-	        api_key = result;
-	        if (api_key != null && api_key.indexOf("error") == -1) { signIn(); }
+	        if ((Boolean) result[0]) {
+	        	api_key = (String) result[1];
+	        	if (api_key != null) { signIn(); }
+	        } else {
+	        	TextView error = (TextView) getActivity().findViewById(R.id.signin_error_tv);
+	        	error.setVisibility(0);
+	        	error.setText((String) result[1]);
+	        }
 	    }
 	}
 }

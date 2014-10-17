@@ -24,7 +24,6 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 
-
 public class Feed extends Activity {
 
 	// Global Variables
@@ -36,11 +35,11 @@ public class Feed extends Activity {
 	static int WP = LayoutParams.WRAP_CONTENT;
 	Context context;
 	int initial_feed_length = 20;
-	String url = "https://daapr.com/rest_append_feed?";
+	String url = "https://orangeseven7.com/rest_append_feed?";
 //    ArrayList<Card> card_data = new ArrayList<Card>();
     ListView feed_listview;
     CardAdapter adapter;
-    int id = 0; // FIX. temporary id for cards. Not needed?
+    int id = 0; // unique id for cards. Not needed?
 
 	
     @SuppressLint({ "SimpleDateFormat", "NewApi" })
@@ -56,69 +55,6 @@ public class Feed extends Activity {
         feed_listview = (ListView)findViewById(R.id.feed_list);
         updateParams(current_length, last_time_synchronized);
     }
-    
-    // Uncomment when top bar needed.
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-    	// Inflate the menu items for use in the action bar
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-    	switch (item.getItemId()) {
-		    case R.id.action_profile:
-		        openProfile();
-		        return true;
-		    case R.id.action_notifications:
-		        openNotifications();
-		        return true;
-		    case R.id.action_add_post:
-		    	openAddPost();
-		    	return true;
-		    case R.id.action_discover_users:
-		    	openUsers();
-		    	return true;
-		    case R.id.action_settings:
-		    	openSettings();
-		    	return true;
-		    default:
-		        return super.onOptionsItemSelected(item);
-    	}
-    }
-    */
-    	 
-	/** Called when the user clicks the Settings action item */
-    private void openSettings() {
-		
-	}
-
-    /** Called when the user clicks the Discover Users action item */
-	private void openUsers() {
-		
-	}
-
-
-	/** Called when the user clicks the Notifications action item */
-    private void openNotifications() {
-		Intent notes = new Intent(this, Notifications.class);
-		startActivity(notes);	
-	}
-    
-    /** Called when the user clicks the "Add a Post" action item */
-	private void openAddPost() {
-		
-	}
-
-	/** Called when the user clicks the Profile action item */
-    private void openProfile() {
-    	Intent profile = new Intent(this, Profile.class);
-		startActivity(profile);
-	}
     
     /** Display card options view. Currently unused.*/
     public RelativeLayout showCardOptions() {
@@ -165,169 +101,174 @@ public class Feed extends Activity {
 	    }
 
 	    protected void onPostExecute(Object[] result) {
-	    	ArrayList<Card> card_data = new ArrayList<Card>();
-//	    	ListView feed_listview = (ListView)findViewById(R.id.feed_list);
-        	// Loop through result array to initialize all Cards
-        	for (int i = 0; i < result.length; i++) {
-//        		System.out.println("LENGTH OF ARRAY = " + result.length);
-        		Card card = new Card(getApplicationContext(), result[i]);
-        		System.out.println("TITLE OF CARD IS " + card.title);
-        		card_data.add(card);
-//        		id++; // Use only if unique id is needed for each card
-        		
-        		// The below code isn't registering for some reason...
-//        		final RelativeLayout card_layout = card_data[i].layout;
-//                // Handles card reaction on click
-//                card_layout.setOnClickListener(new OnClickListener() {
-//                	@SuppressWarnings("null")
-//					@Override
-//                    public void onClick(View v) {
-//                		System.out.println("IN ONCLICK FOR CARD");
-//                		
-//        	  	        card_layout.invalidate();
-//        	  	        feed_listview.invalidate();
-//                	}
-//                });
-        	}
-        	// Adapt cards to views to be put in the listview
-	        if (feed_listview.getAdapter() == null) {
-	            adapter = new CardAdapter(context, R.layout.listview_card, card_data);
-		        feed_listview.setAdapter(adapter);
-	        } else {
-	        	adapter.updateData(card_data);
-		        adapter.notifyDataSetChanged(); //USELESS?? :(
-	        }
-	        feed_listview.setOnScrollListener(new AbsListView.OnScrollListener() {
-	        	@Override
-	            public void onScroll(AbsListView view, int firstVisible, int visibleCount, int totalCount) {
-	                boolean loadMore = /* maybe add a padding */
-	                    firstVisible + visibleCount >= totalCount - 5;
-	                if(loadMore) {
-	                	current_length += adapter.count;
-	                    adapter.count += visibleCount;
-	                    System.out.println("TOTAL ADAPTER COUNT = " + adapter.getCount());
-	                    ((CardAdapter) feed_listview.getAdapter()).notifyDataSetChanged();
-	                    updateParams(current_length, last_time_synchronized);
-	                }
-	            }
-	        	@Override
-	            public void onScrollStateChanged(AbsListView v, int s) { }
-	        });
-	        
-	        // Set listview items to have onItemClickListeners. Opens link (no intermediate view.
-	        // For intermediate view, see http://stackoverflow.com/questions/6867372/add-onclicklistener-to-listview-item.
-	        // See http://stackoverflow.com/questions/18818279/listview-to-open-hyperlinks-in-android.
-	        feed_listview.setOnItemClickListener(new OnItemClickListener() {
-
-				@Override
-				public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
-//					RelativeLayout card_options_layout = showCardOptions();
-//					feed_listview.addView(card_options_layout);
-//					feed_listview.invalidate();
-					String url = adapter.getItem(position).url;
-			        Intent i = new Intent(Intent.ACTION_VIEW);
-			        i.setData(Uri.parse(url));
-			        startActivity(i);
-				}
-	        });	        
-	        
-//	        feed_listview.invalidate();
-	    	
-	    	/*//ORIGINAL CODE BEGIN
-	        //#0-micropost_id, 1-url, 2-title,3-image_url,4-video_url,5-site_name,6-reshare_user_id, 7-micropost_user_name,8-reshare_user_name, 9-reshare_created_at
-	        //#10-reshare_id, 11-micropost_user_id, 12-like_num, 13-current_user_liked, 14-reshare_num, 15-current_user_reshared, 16-caption, 17-comment_num, 18-?, 19-?, 20-micropost_description
-            final LinearLayout feed_layout = (LinearLayout) findViewById(R.id.feed);
-	        // replace 10 with result.length
-            int length = 1000;
-            int load = 20;
-            if (length > 20) {
-            	length -= load;
-            }
-	        for (int i = 0; i < load; i++) {
-//	        	String title = result[i][2];
-//	        	String site_name = result[i][5];
-//	        	String micropost_user_name = result[i][7];
-//	        	String image_url = result[i][3];
-	        	
-	        	// Container that holds the cards
-	        	final RelativeLayout container_layout = new RelativeLayout(getApplicationContext());
-	        	LayoutParams lp = (LayoutParams) new RelativeLayout.LayoutParams(MP, WP);
-	        	container_layout.setLayoutParams(lp);
-	        	int h_margin = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
-	        	int v_margin = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
-	        	// FIX. Change i to be length of result array.
-	        	if (i != load - 1) { container_layout.setPadding(h_margin, v_margin, h_margin, 0); }
-	        	else { container_layout.setPadding(h_margin, v_margin, h_margin, v_margin); }
-	        	container_layout.setBackgroundColor(getResources().getColor(R.color.feed_color));
-	        	
-	        	Card card = new Card(getApplicationContext(), i + 1, (i + 1) * 10,
-	        			(i + 1) * 100, (i + 1) * 1000, (i + 1) * 10000);
-		        
-		        container_layout.addView(card.layout);
-		        feed_layout.addView(container_layout);
-		        */ //ORIGINAL CODE END
-	        
-		        
-		        // Handles card reaction on click
-		        /*OnClickListener card_click = new OnClickListener() {
+	    	if ((Boolean) result[0]) {
+		    	ArrayList<Card> card_data = new ArrayList<Card>();
+	//	    	ListView feed_listview = (ListView)findViewById(R.id.feed_list);
+	        	// Loop through result array to initialize all Cards
+		    	Object[] feed_array = (Object[]) result[1];
+	        	for (int i = 0; i < feed_array.length; i++) {
+	        		Card card = new Card(getApplicationContext(), feed_array[i]);
+	        		card_data.add(card);
+	//        		id++; // Use only if unique id is needed for each card
+	        		
+	        		// The below code isn't registering for some reason...
+	//        		final RelativeLayout card_layout = card_data[i].layout;
+	//                // Handles card reaction on click
+	//                card_layout.setOnClickListener(new OnClickListener() {
+	//                	@SuppressWarnings("null")
+	//					@Override
+	//                    public void onClick(View v) {
+	//                		System.out.println("IN ONCLICK FOR CARD");
+	//                		
+	//        	  	        card_layout.invalidate();
+	//        	  	        feed_listview.invalidate();
+	//                	}
+	//                });
+	        	}
+	        	// Adapt cards to views to be put in the listview
+		        if (feed_listview.getAdapter() == null) {
+		            adapter = new CardAdapter(context, R.layout.listview_card, card_data);
+			        feed_listview.setAdapter(adapter);
+		        } else {
+		        	adapter.updateData(card_data);
+			        adapter.notifyDataSetChanged(); //USELESS?? :(
+		        }
+		        feed_listview.setOnScrollListener(new AbsListView.OnScrollListener() {
 		        	@Override
-		            public void onClick(View v) {
-		        		// Box that covers entire card
-		        		RelativeLayout card_options_layout = new RelativeLayout(getApplicationContext());
-		        		card_options_layout.setLayoutParams((LayoutParams) new RelativeLayout.LayoutParams(
-		        				MP, CARD_WIDTH));
-//		        		card_options_layout.setBackgroundColor(getResources().getColor(R.color.oil));
-		        		card_options_layout.setBackgroundColor(getResources().getColor(R.color.trans_blue));
-
-//		        		ImageView like_iv = new ImageView(getApplicationContext());
-//		        		// GIVE IT A REAL ID
-//		        		like_iv.setId(2000);
-//		        		like_iv.setImageResource(R.drawable.reshare_small);
-//		        		like_iv.setContentDescription("Like");
-//		        		LayoutParams like_lp = (LayoutParams) new RelativeLayout.LayoutParams(CARD_WIDTH / 3,
-//		        				CARD_WIDTH / 3);
-//		        		like_iv.setLayoutParams(like_lp);
-//		        		like_lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
-//		        		
-//		        		ImageView reshare_iv = new ImageView(getApplicationContext());
-//		        		reshare_iv.setImageResource(R.drawable.reshare_small);
-//		        		reshare_iv.setContentDescription("Reshare");
-//		        		LayoutParams reshare_lp = (LayoutParams) new RelativeLayout.LayoutParams(CARD_WIDTH / 3,
-//		        				CARD_WIDTH / 3);
-//		        		reshare_iv.setLayoutParams(reshare_lp);
-//		        		reshare_lp.addRule(RelativeLayout.LEFT_OF, like_iv.getId());
-//
-//		        		ImageView comment_iv = new ImageView(getApplicationContext());
-//		        		comment_iv.setImageResource(R.drawable.reshare_small);
-//		        		comment_iv.setContentDescription("Comment");
-//		        		LayoutParams comment_lp = (LayoutParams) new RelativeLayout.LayoutParams(CARD_WIDTH / 3,
-//		        				CARD_WIDTH / 3);
-//		        		comment_iv.setLayoutParams(comment_lp);
-//		        		comment_lp.addRule(RelativeLayout.RIGHT_OF, like_iv.getId());
-		        		
-		        		TextView view_tv = new TextView(getApplicationContext());	
-		            	view_tv.setText("View this");
-		                LayoutParams lp_view_tv = (LayoutParams) new RelativeLayout.LayoutParams(MP,
-			  	        	(CARD_WIDTH / 3));
-			  	        view_tv.setLayoutParams(lp_view_tv);
-			  	        lp_view_tv.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-			  	        view_tv.setBackgroundColor(getResources().getColor(R.color.daapr_blue));
-			  	        
-//			  	        card_options_layout.addView(like_iv);
-//			  	        card_options_layout.addView(reshare_iv);
-//			  	        card_options_layout.addView(comment_iv);
-			  	        card_options_layout.addView(view_tv);
-//			  	        card_layout.addView(card_options_layout);
-//			  	        container_layout.invalidate();
-//			  	        feed_layout.invalidate();
-			  	        feed_listview.invalidate();
-		        	}
-		        };
-//	        	card_layout.setOnClickListener(card_click);
-//		        layout.setOnClickListener(card_click); */
-	        
-	        
-	        //} //FOR LOOP END
+		            public void onScroll(AbsListView view, int firstVisible, int visibleCount, int totalCount) {
+		                boolean loadMore = /* maybe add a padding */
+		                    firstVisible + visibleCount >= totalCount - 5;
+		                if(loadMore) {
+		                	current_length += adapter.count;
+		                    adapter.count += visibleCount;
+		                    System.out.println("TOTAL ADAPTER COUNT = " + adapter.getCount());
+		                    ((CardAdapter) feed_listview.getAdapter()).notifyDataSetChanged();
+		                    updateParams(current_length, last_time_synchronized);
+		                }
+		            }
+		        	@Override
+		            public void onScrollStateChanged(AbsListView v, int s) { }
+		        });
+		        
+		        // Set listview items to have onItemClickListeners. Opens link (no intermediate view.
+		        // For intermediate view, see http://stackoverflow.com/questions/6867372/add-onclicklistener-to-listview-item.
+		        // See http://stackoverflow.com/questions/18818279/listview-to-open-hyperlinks-in-android.
+		        feed_listview.setOnItemClickListener(new OnItemClickListener() {
+	
+					@Override
+					public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
+	//					RelativeLayout card_options_layout = showCardOptions();
+	//					feed_listview.addView(card_options_layout);
+	//					feed_listview.invalidate();
+						String url = adapter.getItem(position).url;
+				        Intent i = new Intent(Intent.ACTION_VIEW);
+				        i.setData(Uri.parse(url));
+				        startActivity(i);
+					}
+		        });	        
+		        
+	//	        feed_listview.invalidate();
+		    	
+		    	/*//ORIGINAL CODE BEGIN
+		        //#0-micropost_id, 1-url, 2-title,3-image_url,4-video_url,5-site_name,6-reshare_user_id, 7-micropost_user_name,8-reshare_user_name, 9-reshare_created_at
+		        //#10-reshare_id, 11-micropost_user_id, 12-like_num, 13-current_user_liked, 14-reshare_num, 15-current_user_reshared, 16-caption, 17-comment_num, 18-?, 19-?, 20-micropost_description
+	            final LinearLayout feed_layout = (LinearLayout) findViewById(R.id.feed);
+		        // replace 10 with result.length
+	            int length = 1000;
+	            int load = 20;
+	            if (length > 20) {
+	            	length -= load;
+	            }
+		        for (int i = 0; i < load; i++) {
+	//	        	String title = result[i][2];
+	//	        	String site_name = result[i][5];
+	//	        	String micropost_user_name = result[i][7];
+	//	        	String image_url = result[i][3];
+		        	
+		        	// Container that holds the cards
+		        	final RelativeLayout container_layout = new RelativeLayout(getApplicationContext());
+		        	LayoutParams lp = (LayoutParams) new RelativeLayout.LayoutParams(MP, WP);
+		        	container_layout.setLayoutParams(lp);
+		        	int h_margin = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
+		        	int v_margin = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
+		        	// FIX. Change i to be length of result array.
+		        	if (i != load - 1) { container_layout.setPadding(h_margin, v_margin, h_margin, 0); }
+		        	else { container_layout.setPadding(h_margin, v_margin, h_margin, v_margin); }
+		        	container_layout.setBackgroundColor(getResources().getColor(R.color.feed_color));
+		        	
+		        	Card card = new Card(getApplicationContext(), i + 1, (i + 1) * 10,
+		        			(i + 1) * 100, (i + 1) * 1000, (i + 1) * 10000);
+			        
+			        container_layout.addView(card.layout);
+			        feed_layout.addView(container_layout);
+			        */ //ORIGINAL CODE END
+		        
+			        
+			        // Handles card reaction on click
+			        /*OnClickListener card_click = new OnClickListener() {
+			        	@Override
+			            public void onClick(View v) {
+			        		// Box that covers entire card
+			        		RelativeLayout card_options_layout = new RelativeLayout(getApplicationContext());
+			        		card_options_layout.setLayoutParams((LayoutParams) new RelativeLayout.LayoutParams(
+			        				MP, CARD_WIDTH));
+	//		        		card_options_layout.setBackgroundColor(getResources().getColor(R.color.oil));
+			        		card_options_layout.setBackgroundColor(getResources().getColor(R.color.trans_blue));
+	
+	//		        		ImageView like_iv = new ImageView(getApplicationContext());
+	//		        		// GIVE IT A REAL ID
+	//		        		like_iv.setId(2000);
+	//		        		like_iv.setImageResource(R.drawable.reshare_small);
+	//		        		like_iv.setContentDescription("Like");
+	//		        		LayoutParams like_lp = (LayoutParams) new RelativeLayout.LayoutParams(CARD_WIDTH / 3,
+	//		        				CARD_WIDTH / 3);
+	//		        		like_iv.setLayoutParams(like_lp);
+	//		        		like_lp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+	//		        		
+	//		        		ImageView reshare_iv = new ImageView(getApplicationContext());
+	//		        		reshare_iv.setImageResource(R.drawable.reshare_small);
+	//		        		reshare_iv.setContentDescription("Reshare");
+	//		        		LayoutParams reshare_lp = (LayoutParams) new RelativeLayout.LayoutParams(CARD_WIDTH / 3,
+	//		        				CARD_WIDTH / 3);
+	//		        		reshare_iv.setLayoutParams(reshare_lp);
+	//		        		reshare_lp.addRule(RelativeLayout.LEFT_OF, like_iv.getId());
+	//
+	//		        		ImageView comment_iv = new ImageView(getApplicationContext());
+	//		        		comment_iv.setImageResource(R.drawable.reshare_small);
+	//		        		comment_iv.setContentDescription("Comment");
+	//		        		LayoutParams comment_lp = (LayoutParams) new RelativeLayout.LayoutParams(CARD_WIDTH / 3,
+	//		        				CARD_WIDTH / 3);
+	//		        		comment_iv.setLayoutParams(comment_lp);
+	//		        		comment_lp.addRule(RelativeLayout.RIGHT_OF, like_iv.getId());
+			        		
+			        		TextView view_tv = new TextView(getApplicationContext());	
+			            	view_tv.setText("View this");
+			                LayoutParams lp_view_tv = (LayoutParams) new RelativeLayout.LayoutParams(MP,
+				  	        	(CARD_WIDTH / 3));
+				  	        view_tv.setLayoutParams(lp_view_tv);
+				  	        lp_view_tv.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+				  	        view_tv.setBackgroundColor(getResources().getColor(R.color.daapr_blue));
+				  	        
+	//			  	        card_options_layout.addView(like_iv);
+	//			  	        card_options_layout.addView(reshare_iv);
+	//			  	        card_options_layout.addView(comment_iv);
+				  	        card_options_layout.addView(view_tv);
+	//			  	        card_layout.addView(card_options_layout);
+	//			  	        container_layout.invalidate();
+	//			  	        feed_layout.invalidate();
+				  	        feed_listview.invalidate();
+			        	}
+			        };
+	//	        	card_layout.setOnClickListener(card_click);
+	//		        layout.setOnClickListener(card_click); */
+		        
+		        
+		        //} //FOR LOOP END
+		    } else {
+		    	TextView error = (TextView) findViewById(R.id.feed_error_tv);
+	        	error.setVisibility(0); // set to visible
+	        	error.setText((String) result[1]);
+		    }
 	    }
 	}
 }

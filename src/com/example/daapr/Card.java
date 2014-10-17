@@ -43,7 +43,6 @@ public class Card extends Activity {
 	static int WP = LayoutParams.WRAP_CONTENT;
 	
 	public Card(Context c, Object result) {
-//		System.out.println("CARD ID IS " + id);
 		Object[] card_array = (Object[]) result;
 		
 		micropost_id = (Integer) card_array[0];

@@ -1219,7 +1219,6 @@ containing a value of this type.
         public static final int wieber=0x7f020092;
     }
     public static final class id {
-        public static final int action_add_post=0x7f050071;
         public static final int action_bar=0x7f05001e;
         public static final int action_bar_activity_content=0x7f050017;
         public static final int action_bar_container=0x7f05001d;
@@ -1228,16 +1227,13 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f050025;
         public static final int action_bar_title=0x7f050024;
         public static final int action_context_bar=0x7f05001f;
-        public static final int action_discover_users=0x7f050072;
         public static final int action_menu_divider=0x7f050018;
         public static final int action_menu_presenter=0x7f050019;
         public static final int action_mode_close_button=0x7f050026;
-        public static final int action_notifications=0x7f050070;
-        public static final int action_profile=0x7f05006f;
-        public static final int action_settings=0x7f050073;
+        public static final int action_signout=0x7f050070;
         public static final int activity_chooser_view_content=0x7f050027;
         public static final int always=0x7f05000d;
-        public static final int authButton=0x7f05006c;
+        public static final int authButton=0x7f05006d;
         public static final int beginning=0x7f050013;
         public static final int bottom_card=0x7f050062;
         public static final int card=0x7f05005e;
@@ -1296,7 +1292,7 @@ containing a value of this type.
         public static final int none=0x7f050012;
         public static final int normal=0x7f050001;
         public static final int notifications_view=0x7f050064;
-        public static final int password_et=0x7f05006a;
+        public static final int password_et=0x7f05006b;
         public static final int picker_subtitle=0x7f05004d;
         public static final int posts=0x7f050066;
         public static final int progress_circular=0x7f05001a;
@@ -1316,14 +1312,15 @@ containing a value of this type.
         public static final int showCustom=0x7f050009;
         public static final int showHome=0x7f050006;
         public static final int showTitle=0x7f050008;
-        public static final int signin=0x7f05006b;
-        public static final int signin_error_tv=0x7f05006e;
+        public static final int signin=0x7f05006c;
+        public static final int signin_error_tv=0x7f05006f;
+        public static final int signin_logo=0x7f050069;
         public static final int small=0x7f050000;
         public static final int source=0x7f050060;
         public static final int split_action_bar=0x7f050020;
         public static final int submit_area=0x7f05003b;
         public static final int tabMode=0x7f050004;
-        public static final int testing=0x7f05006d;
+        public static final int testing=0x7f05006e;
         public static final int textView1=0x7f05005c;
         public static final int textView2=0x7f05005d;
         public static final int time=0x7f050063;
@@ -1333,7 +1330,7 @@ containing a value of this type.
         public static final int useLogo=0x7f050005;
         public static final int user=0x7f050061;
         public static final int user_image=0x7f050065;
-        public static final int username_et=0x7f050069;
+        public static final int username_et=0x7f05006a;
         public static final int withText=0x7f05000e;
     }
     public static final class integer {
@@ -1495,6 +1492,7 @@ containing a value of this type.
         public static final int posts=0x7f080038;
         public static final int reshare_string=0x7f080039;
         public static final int signin=0x7f08002a;
+        public static final int signout=0x7f08003a;
         public static final int test_card_name=0x7f080031;
         public static final int time=0x7f080030;
         public static final int user=0x7f08002c;

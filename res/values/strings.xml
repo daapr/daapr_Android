@@ -24,6 +24,8 @@
     <string name="posts">Posts</string>
     
     <string name="reshare_string">Reshare</string>
+    
+    <string name="signout">Sign Out</string>
 
     
 </resources>

@@ -7,9 +7,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -17,9 +20,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +37,9 @@ import com.facebook.widget.LoginButton;
 
 public class FbFragment extends Fragment {
 	String fb_id, first_name, last_name, fb_email, fb_image; // attributes needed for FB login
-	private UiLifecycleHelper uiHelper; // helps track session state changes
-	String api_key; // attribute needed for regular sign in
+	private UiLifecycleHelper uiHelper; // helps track fragment state changes
+	String api_key; // attribute needed for sign in (regular and FB)
+	SharedPreferences sharedPref; // tracks app's session state
 	
 	// Returns if a network connection is available. Used for debugging.
 	public boolean availableConnection() {
@@ -102,36 +103,50 @@ public class FbFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
 	        						Bundle savedInstanceState) {
-	    View view = inflater.inflate(R.layout.signin, container, false);
-	    // Actual user input values.
-    	final EditText email_et = (EditText) view.findViewById(R.id.username_et);
-    	final EditText password_et = (EditText) view.findViewById(R.id.password_et);
-		Button btn = (Button) view.findViewById(R.id.signin);
-		btn.setOnClickListener(new View.OnClickListener() {
-		    @Override
-		    public void onClick(View v) {
-		    	System.out.println("IN ON CLICK FOR SIGN IN in fragment onCreateView");
-			    try {
-			    	String url = "https://daapr.com/rest_sign_in?";
-					String email = "test@example.com";
-					String password = "testing123";
-			    	// Replace with below code when using the actual user's inputs
-//			    	String email = email_et.getText().toString();
-//			    	String password = password_et.getText().toString();
-					List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
-			        urlParams.add(new BasicNameValuePair("email", email));
-			    	urlParams.add(new BasicNameValuePair("password", password));
-			    	new SignInTask().execute(url, urlParams);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-		    }
-		});
-	    LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
-	    // Allow fragment to receive onActivityResult() call
-	    authButton.setFragment(this);
-	    authButton.setReadPermissions(Arrays.asList("email", "public_profile"));
-	    return view;
+	    // Get a handle to shared preferences
+	    sharedPref = getActivity().getSharedPreferences(
+		        "com.example.daapr.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+		// Read from shared preferences
+		String session_api_key = sharedPref.getString("api_key", null);
+		if (session_api_key == null) {
+			// Render sign in page
+			 View view = inflater.inflate(R.layout.signin, container, false);
+		    // Actual user input values
+	    	final EditText email_et = (EditText) view.findViewById(R.id.username_et);
+	    	final EditText password_et = (EditText) view.findViewById(R.id.password_et);
+			Button btn = (Button) view.findViewById(R.id.signin);
+			btn.setOnClickListener(new View.OnClickListener() {
+			    @Override
+			    public void onClick(View v) {
+			    	System.out.println("IN ON CLICK FOR SIGN IN in fragment onCreateView");
+				    try {
+				    	String url = "https://orangeseven7.com/rest_sign_in?";
+						String email = "test@example.com";
+						String password = "testing123";
+				    	// Replace with below code when using the actual user's inputs
+//				    	String email = email_et.getText().toString();
+//				    	String password = password_et.getText().toString();
+						List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
+				        urlParams.add(new BasicNameValuePair("email", email));
+				    	urlParams.add(new BasicNameValuePair("password", password));
+				    	new SignInTask().execute(url, urlParams);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+			    }
+			});
+		    LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
+		    // Allow fragment to receive onActivityResult() call
+		    authButton.setFragment(this);
+		    authButton.setReadPermissions(Arrays.asList("email", "public_profile"));
+		    return view;
+		} else {
+			// go to feed
+			api_key = session_api_key;
+			signIn();
+			return null;
+		}
+	    
 	}
 	
 	/** Currently unused. Should return the user's Facebook profile picture as a bitmap given
@@ -165,8 +180,6 @@ public class FbFragment extends Fragment {
 		            }
 				}
             }).executeAsync();
-	    } else {
-	    	System.out.println("---State is closed---");
 	    }
 	}
 	
@@ -181,8 +194,8 @@ public class FbFragment extends Fragment {
             last_name + "; " + fb_email + "; ");
 	}
 	
-	/** Called when the user clicks the Sign In button or the Facebook Login button */
-	public void signIn() {
+	/** Starts the feed activity after passing api_key to the feed. */
+	private void signIn() {
 		Intent feed = new Intent(getActivity(), Feed.class);
 		feed.putExtra("API_KEY", api_key);
 		startActivity(feed);
@@ -202,8 +215,17 @@ public class FbFragment extends Fragment {
 	        tv1.setText("api_key: " + result[1]);
 	        
 	        if ((Boolean) result[0]) {
-	        	api_key = (String) result[1];
-	        	if (api_key != null) { signIn(); }
+	        	JSONObject user = (JSONObject) result[1];
+	        	try {
+					api_key = (String) user.get("api_key");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+	        	// Write the api key to shared preferences
+				SharedPreferences.Editor editor = sharedPref.edit();
+				editor.putString("api_key", api_key);
+				editor.commit();
+	        	signIn();
 	        } else {
 	        	TextView error = (TextView) getActivity().findViewById(R.id.signin_error_tv);
 	        	error.setVisibility(0);

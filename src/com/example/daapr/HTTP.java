@@ -1,6 +1,4 @@
 package com.example.daapr;
-import android.annotation.SuppressLint;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,9 +6,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,18 +15,15 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
+
+import android.annotation.SuppressLint;
 
 
 public class HTTP {
@@ -95,6 +87,7 @@ public class HTTP {
 	        
 	    	// Execute HTTP Post Request
 	    	response = httpclient.execute(httppost);
+	    	System.out.println("HTTP response is: " + response);
 	    	// Convert HTTP response into JSONArray
 	    	BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 	    	StringBuilder builder = new StringBuilder();
@@ -102,14 +95,13 @@ public class HTTP {
 	    	    builder.append(line).append("\n");
 	    	}
 	    	JSONTokener tokener = new JSONTokener(builder.toString());
+	    	System.out.println("Tokener is...." + tokener);
 			JSONArray jsonArray = new JSONArray(tokener);
 			// Convert JSONArray into array result
 	    	Object[] result = new Object[jsonArray.length()];
 	    	for (int i = 0; i < jsonArray.length(); i++) {
 	    		result[i] = jsonArray.get(i);
 	    	}
-//		    result[0] = jsonArray.getBoolean(0);
-//		    result[1] = jsonArray.getString(1);
 	    	return result;
 			
 	        // Convert response to string
@@ -124,6 +116,7 @@ public class HTTP {
 	    	e.printStackTrace();
 	    	return null;
 	    } catch (JSONException e) {
+	    	System.out.println("In json exception for sign in");
 			e.printStackTrace();
 			return null;
 		}

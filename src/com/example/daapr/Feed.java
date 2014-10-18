@@ -8,23 +8,26 @@ import java.util.List;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 
-public class Feed extends Activity {
+public class Feed extends ActionBarActivity {
 
 	// Global Variables
 	String api_key;
@@ -36,10 +39,8 @@ public class Feed extends Activity {
 	Context context;
 	int initial_feed_length = 20;
 	String url = "https://orangeseven7.com/rest_append_feed?";
-//    ArrayList<Card> card_data = new ArrayList<Card>();
     ListView feed_listview;
     CardAdapter adapter;
-    int id = 0; // unique id for cards. Not needed?
 
 	
     @SuppressLint({ "SimpleDateFormat", "NewApi" })
@@ -47,8 +48,7 @@ public class Feed extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.feed);
-        getActionBar().setDisplayShowHomeEnabled(false);
-        getActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         context = this;
         
         api_key = getIntent().getStringExtra("API_KEY");
@@ -56,27 +56,39 @@ public class Feed extends Activity {
         updateParams(current_length, last_time_synchronized);
     }
     
-    /** Display card options view. Currently unused.*/
-    public RelativeLayout showCardOptions() {
-    	// Box that covers entire card
-		RelativeLayout card_options_layout = new RelativeLayout(getApplicationContext());
-		card_options_layout.setLayoutParams((LayoutParams) new RelativeLayout.LayoutParams(
-				MP, CARD_WIDTH));
-		card_options_layout.setBackgroundColor(getResources().getColor(R.color.trans_blue));
-
-		TextView view_tv = new TextView(getApplicationContext());	
-    	view_tv.setText("View this");
-        LayoutParams lp_view_tv = (LayoutParams) new RelativeLayout.LayoutParams(MP,
-	        	(CARD_WIDTH / 3));
-        view_tv.setLayoutParams(lp_view_tv);
-        lp_view_tv.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        view_tv.setBackgroundColor(getResources().getColor(R.color.daapr_blue));
-        
-        card_options_layout.addView(view_tv);
-        return card_options_layout;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	// Inflate the menu items for use in the action bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        return super.onCreateOptionsMenu(menu);
     }
     
-    @SuppressLint("SimpleDateFormat")
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+    	switch (item.getItemId()) {
+		    case R.id.action_signout:
+		        signOut();
+		        return true;
+		    default:
+		        return super.onOptionsItemSelected(item);
+    	}
+    }
+    
+    private void signOut() {
+    	// Remove the session's api_key
+    	SharedPreferences sharedPref = getSharedPreferences(
+		        "com.example.daapr.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+    	SharedPreferences.Editor editor = sharedPref.edit();
+		editor.remove("api_key");
+		editor.commit();
+		// Navigate back to sign in
+		Intent signin = new Intent(this, SignIn.class);
+		startActivity(signin);
+	}
+
+	@SuppressLint("SimpleDateFormat")
 	public void updateParams(int new_length, String last_time_synchronized) {
         List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
         if (current_length == 0) { System.out.println("The current_length is 0"); }
@@ -103,27 +115,11 @@ public class Feed extends Activity {
 	    protected void onPostExecute(Object[] result) {
 	    	if ((Boolean) result[0]) {
 		    	ArrayList<Card> card_data = new ArrayList<Card>();
-	//	    	ListView feed_listview = (ListView)findViewById(R.id.feed_list);
 	        	// Loop through result array to initialize all Cards
 		    	Object[] feed_array = (Object[]) result[1];
 	        	for (int i = 0; i < feed_array.length; i++) {
 	        		Card card = new Card(getApplicationContext(), feed_array[i]);
 	        		card_data.add(card);
-	//        		id++; // Use only if unique id is needed for each card
-	        		
-	        		// The below code isn't registering for some reason...
-	//        		final RelativeLayout card_layout = card_data[i].layout;
-	//                // Handles card reaction on click
-	//                card_layout.setOnClickListener(new OnClickListener() {
-	//                	@SuppressWarnings("null")
-	//					@Override
-	//                    public void onClick(View v) {
-	//                		System.out.println("IN ONCLICK FOR CARD");
-	//                		
-	//        	  	        card_layout.invalidate();
-	//        	  	        feed_listview.invalidate();
-	//                	}
-	//                });
 	        	}
 	        	// Adapt cards to views to be put in the listview
 		        if (feed_listview.getAdapter() == null) {

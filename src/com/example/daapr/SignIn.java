@@ -1,10 +1,15 @@
 package com.example.daapr;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Window;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 
 
 public class SignIn extends FragmentActivity {
@@ -24,7 +29,7 @@ public class SignIn extends FragmentActivity {
 	        .add(android.R.id.content, fbfragment)
 	        .commit();
 	    } else {
-	        // Or set the fragment from restored state info
+	        // set the fragment from restored state info
 	        fbfragment = (FbFragment) getSupportFragmentManager()
 	        .findFragmentById(android.R.id.content);
 	    }

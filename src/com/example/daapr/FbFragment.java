@@ -224,6 +224,7 @@ public class FbFragment extends Fragment {
 	        	// Write the api key to shared preferences
 				SharedPreferences.Editor editor = sharedPref.edit();
 				editor.putString("api_key", api_key);
+				editor.putString("fb_id", fb_id);
 				editor.commit();
 	        	signIn();
 	        } else {

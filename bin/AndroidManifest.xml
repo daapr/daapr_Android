@@ -15,9 +15,10 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <application
         android:allowBackup="true"
-        android:icon="@drawable/home_button"
+        android:icon="@drawable/appicon"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme" 
+        android:logo="@drawable/appicon_transparent" >
         <activity
             android:name=".SignIn"
             android:label="@string/app_name" 

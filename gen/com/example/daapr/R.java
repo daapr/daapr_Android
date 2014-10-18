@@ -1156,8 +1156,8 @@ containing a value of this type.
         public static final int abc_textfield_searchview_holo_light=0x7f020054;
         public static final int abc_textfield_searchview_right_holo_dark=0x7f020055;
         public static final int abc_textfield_searchview_right_holo_light=0x7f020056;
-        public static final int addition=0x7f020057;
-        public static final int appicon=0x7f020058;
+        public static final int appicon=0x7f020057;
+        public static final int appicon_transparent=0x7f020058;
         public static final int button_bottom_round=0x7f020059;
         public static final int button_facebook=0x7f02005a;
         public static final int button_signin=0x7f02005b;
@@ -1179,7 +1179,7 @@ containing a value of this type.
         public static final int com_facebook_list_section_header_background=0x7f02006b;
         public static final int com_facebook_loginbutton_silver=0x7f02006c;
         public static final int com_facebook_logo=0x7f02006d;
-        public static final int com_facebook_picker_default_separator_color=0x7f020092;
+        public static final int com_facebook_picker_default_separator_color=0x7f020090;
         public static final int com_facebook_picker_item_background=0x7f02006e;
         public static final int com_facebook_picker_list_focused=0x7f02006f;
         public static final int com_facebook_picker_list_longpressed=0x7f020070;
@@ -1209,13 +1209,11 @@ containing a value of this type.
         public static final int ic_launcher=0x7f020088;
         public static final int light_divider=0x7f020089;
         public static final int logo=0x7f02008a;
-        public static final int maroney=0x7f02008b;
-        public static final int maroney_hr=0x7f02008c;
-        public static final int notification=0x7f02008d;
-        public static final int official_daapr_logo=0x7f02008e;
-        public static final int people=0x7f02008f;
-        public static final int reshare_small=0x7f020090;
-        public static final int wieber=0x7f020091;
+        public static final int notification=0x7f02008b;
+        public static final int official_daapr_logo=0x7f02008c;
+        public static final int refresh=0x7f02008d;
+        public static final int reshare_small=0x7f02008e;
+        public static final int wieber=0x7f02008f;
     }
     public static final class id {
         public static final int action_bar=0x7f05001e;
@@ -1229,7 +1227,8 @@ containing a value of this type.
         public static final int action_menu_divider=0x7f050018;
         public static final int action_menu_presenter=0x7f050019;
         public static final int action_mode_close_button=0x7f050026;
-        public static final int action_signout=0x7f050070;
+        public static final int action_refresh=0x7f050070;
+        public static final int action_signout=0x7f050071;
         public static final int activity_chooser_view_content=0x7f050027;
         public static final int always=0x7f05000d;
         public static final int authButton=0x7f05006d;
@@ -1489,6 +1488,7 @@ containing a value of this type.
         public static final int notifications=0x7f080032;
         public static final int password=0x7f080029;
         public static final int posts=0x7f080038;
+        public static final int refresh=0x7f08003b;
         public static final int reshare_string=0x7f080039;
         public static final int signin=0x7f08002a;
         public static final int signout=0x7f08003a;

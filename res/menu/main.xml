@@ -3,9 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.myfirstapp.MainActivity" >
 
+     <item 
+        android:id="@+id/action_refresh"
+        android:title="@string/refresh"
+        android:icon="@drawable/refresh"
+        app:showAsAction="always" />
+   
     <item
         android:id="@+id/action_signout"
         android:title="@string/signout"
         app:showAsAction="always" />
 
+    
 </menu>

@@ -68,49 +68,26 @@ public class CardAdapter extends ArrayAdapter<Card> {
 
 	@Override
 	public View getView(int position, View convertView, final ViewGroup parent) {
-
 		View row = convertView;
-
 		if (row == null) {
-
 			// inflate the layout
-
 			LayoutInflater inflater = ((Activity) context)
-
-			.getLayoutInflater();
-
+					.getLayoutInflater();
 			row = inflater.inflate(layoutResourceId, parent, false);
-
 			// set the card holder
-
 			holder = new CardHolder();
-
 			holder.tv_title = (TextView) row.findViewById(R.id.title);
-
 			holder.tv_source = (TextView) row.findViewById(R.id.source);
-
 			holder.tv_user = (TextView) row.findViewById(R.id.user);
-
 			holder.tv_time = (TextView) row.findViewById(R.id.time);
-
 			// store the holder with the view
-
 			row.setTag(holder);
-
 		} else {
-
 			holder = (CardHolder) row.getTag();
-
 		}
 
 		if (position < data.size()) {
-
-			System.out.println("CURRENT POSITION IS " + position);
-
-			System.out.println("size is " + data.size());
-
 			Card card = data.get(position);
-
 			// assign values if the object is not null
 			if (card != null) {
 				holder.tv_title.setTextColor(context.getResources().getColor(

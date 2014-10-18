@@ -11,80 +11,213 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout.LayoutParams;
 
 public class Card extends Activity {
-	//#0-micropost_id, 1-url, 2-title,3-image_url,4-video_url,5-site_name,6-reshare_user_id,
+	// #0-micropost_id, 1-url,
+	// 2-title,3-image_url,4-video_url,5-site_name,6-reshare_user_id,
 	// 7-micropost_user_name,8-reshare_user_name, 9-reshare_created_at
-    //#10-reshare_id, 11-micropost_user_id, 12-like_num, 13-current_user_liked, 14-reshare_num,
-	// 15-current_user_reshared, 16-caption, 17-comment_num, 18-?, 19-?, 20-micropost_description
-	public int micropost_id;
-	public String url;
-	public String title;
-	private String image_url;
-	private String video_url;
-	public String site_name;
-	private int reshare_user_id;
-	public String micropost_user_name;
-	public String reshare_user_name;
-	public String reshare_created_at;
-	private int reshare_id;
-	private int micropost_user_id;
-	private int like_num;
-	private String[] current_user_liked;
-	private int reshare_num;
-	private String current_user_reshared;
+	// #10-reshare_id, 11-micropost_user_id, 12-like_num, 13-current_user_liked,
+	// 14-reshare_num,
+	// 15-current_user_reshared, 16-caption, 17-comment_num, 18-?, 19-?,
+	// 20-micropost_description
+	private int micropostId;
+	private String url;
+	private String title;
+	private String imageUrl;
+	private String videoUrl;
+	private String siteName;
+	private int reshareUserId;
+	private String micropostUserName;
+	private String reshareUserName;
+	private String reshareCreatedAt;
+	private int reshareId;
+	private int micropostUserId;
+	private int likeNum;
+	private String[] currentUserLiked;
+	private int reshareNum;
+	private String currentUserReshared;
 	private String caption;
-	private int comment_num;
-	private String micropost_description;
-	
-	public ImageView card_image;
-	public Drawable image_drawable;
-	
-	static int CARD_WIDTH = 200;
-	static int MP = LayoutParams.MATCH_PARENT;
-	static int WP = LayoutParams.WRAP_CONTENT;
-	
+	private int commentNum;
+	private String micropostDescription;
+	private ImageView cardImage;
+	private Drawable imageDrawable;
+
 	public Card(Context c, Object result) {
+
 		Object[] card_array = (Object[]) result;
-		
-		micropost_id = (Integer) card_array[0];
-    	image_url = (String) card_array[3];
-        site_name = (String) card_array[5];
-        url = (String) card_array[1];
-    	title = (String) card_array[2];
-        reshare_created_at = (String) card_array[9];
-        micropost_user_name = (String) card_array[7];
-        reshare_user_name = (String) card_array[8];
-        new LoadImageTask().execute();
-	}
-	
-	/** Load an image from url and set the source name of the url to be srcName. */
-	public static Drawable loadImage(String url, String srcName) {
-	    try {
-	        InputStream is = (InputStream) new URL(url).getContent();
-	        Drawable d = Drawable.createFromStream(is, srcName);
-	        return d;
-	    } catch (Exception e) {
-	    	System.out.println("Error: In loadImage");
-	    	e.printStackTrace();
-	        return null;
-	    }
-	}
-	
-	/** Asynchronous task that loads images. */
-	class LoadImageTask extends AsyncTask<Void, Void, Drawable> {
 
-	    protected Drawable doInBackground(Void... params) {
-	        try {
-//	        	System.out.println("Image url is: " + image_url);
-	        	return loadImage(image_url, site_name);
-	        } catch (Exception e) {
-	        	System.out.println("Error: In LoadImageTask");
-	            e.printStackTrace();
-	            return null;
-	        }
-	    }
+		micropostId = (Integer) card_array[0];
+		imageUrl = (String) card_array[3];
+		siteName = (String) card_array[5];
+		url = (String) card_array[1];
+		title = (String) card_array[2];
+		reshareCreatedAt = (String) card_array[9];
+		micropostUserName = (String) card_array[7];
+	}
 
-	    protected void onPostExecute(Drawable image) {
-	    	image_drawable = image;
-	    }
+	public int getMicropostId() {
+		return micropostId;
+	}
+
+	public void setMicropostId(int micropostId) {
+		this.micropostId = micropostId;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getCardTitle() {
+		return title;
+	}
+
+	public void setCardTitle(String title) {
+		this.title = title;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public String getVideoUrl() {
+		return videoUrl;
+	}
+
+	public void setVideoUrl(String videoUrl) {
+		this.videoUrl = videoUrl;
+	}
+
+	public String getSiteName() {
+		return siteName;
+	}
+
+	public void setSiteName(String siteName) {
+		this.siteName = siteName;
+	}
+
+	public int getReshareUserId() {
+		return reshareUserId;
+	}
+
+	public void setReshareUserId(int reshareUserId) {
+		this.reshareUserId = reshareUserId;
+	}
+
+	public String getMicropostUserName() {
+		return micropostUserName;
+	}
+
+	public void setMicropostUserName(String micropostUserName) {
+		this.micropostUserName = micropostUserName;
+	}
+
+	public String getReshareUserName() {
+		return reshareUserName;
+	}
+
+	public void setReshareUserName(String reshareUserName) {
+		this.reshareUserName = reshareUserName;
+	}
+
+	public String getReshareCreatedAt() {
+		return reshareCreatedAt;
+	}
+
+	public void setReshareCreatedAt(String reshareCreatedAt) {
+		this.reshareCreatedAt = reshareCreatedAt;
+	}
+
+	public int getReshareId() {
+		return reshareId;
+	}
+
+	public void setReshareId(int reshareId) {
+		this.reshareId = reshareId;
+	}
+
+	public int getMicropostUserId() {
+		return micropostUserId;
+	}
+
+	public void setMicropostUserId(int micropostUserId) {
+		this.micropostUserId = micropostUserId;
+	}
+
+	public int getLikeNum() {
+		return likeNum;
+	}
+
+	public void setLikeNum(int likeNum) {
+		this.likeNum = likeNum;
+	}
+
+	public String[] getCurrentUserLiked() {
+		return currentUserLiked;
+	}
+
+	public void setCurrentUserLiked(String[] currentUserLiked) {
+		this.currentUserLiked = currentUserLiked;
+	}
+
+	public int getReshareNum() {
+		return reshareNum;
+	}
+
+	public void setReshareNum(int reshareNum) {
+		this.reshareNum = reshareNum;
+	}
+
+	public String getCurrentUserReshared() {
+		return currentUserReshared;
+	}
+
+	public void setCurrentUserReshared(String currentUserReshared) {
+		this.currentUserReshared = currentUserReshared;
+	}
+
+	public String getCaption() {
+		return caption;
+	}
+
+	public void setCaption(String caption) {
+		this.caption = caption;
+	}
+
+	public int getCommentNum() {
+		return commentNum;
+	}
+
+	public void setCommentNum(int commentNum) {
+		this.commentNum = commentNum;
+	}
+
+	public String getMicropostDescription() {
+		return micropostDescription;
+	}
+
+	public void setMicropostDescription(String micropostDescription) {
+		this.micropostDescription = micropostDescription;
+	}
+
+	public ImageView getCardImage() {
+		return cardImage;
+	}
+
+	public void setCardImage(ImageView cardImage) {
+		this.cardImage = cardImage;
+	}
+
+	public Drawable getImageDrawable() {
+		return imageDrawable;
+	}
+
+	public void setImageDrawable(Drawable imageDrawable) {
+		this.imageDrawable = imageDrawable;
 	}
 }

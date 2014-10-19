@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -102,8 +103,7 @@ public class FbFragment extends Fragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, 
-	        						Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    // Get a handle to shared preferences
 	    sharedPref = getActivity().getSharedPreferences(
 		        "com.example.daapr.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
@@ -136,6 +136,17 @@ public class FbFragment extends Fragment {
 					}
 			    }
 			});
+			// Set up on click for creating a new account
+			TextView newAccountLink = (TextView) view.findViewById(R.id.create_account_link);
+			newAccountLink.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					String url = "https://www.daapr.com";
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setData(Uri.parse(url));
+					startActivity(i);
+				}
+			});
 		    LoginButton authButton = (LoginButton) view.findViewById(R.id.authButton);
 		    // Allow fragment to receive onActivityResult() call
 		    authButton.setFragment(this);
@@ -164,7 +175,6 @@ public class FbFragment extends Fragment {
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 		if (state.isOpened()) {
 	        Request.newMeRequest(session, new Request.GraphUserCallback() {
-	        	boolean calledSignIn = false;
 				@Override
 				public void onCompleted(GraphUser user, Response response) {
 					if (user != null) {
@@ -179,15 +189,10 @@ public class FbFragment extends Fragment {
 				    	urlParams.add(new BasicNameValuePair("last_name", last_name));
 				    	urlParams.add(new BasicNameValuePair("image", fb_image));
 				    	urlParams.add(new BasicNameValuePair("facebook_id", fb_id));
-				    	if (!calledSignIn) {
-				    		System.out.println("&^&^&Calling sign in via FB");
-				    		calledSignIn = true;
-				    		new SignInTask().execute(url, urlParams);
-				    	}
+			    		new SignInTask().execute(url, urlParams);
 		            }
 				}
             }).executeAsync();
-//	        getActivity().finish();
 	    }
 	}
 	
@@ -197,20 +202,17 @@ public class FbFragment extends Fragment {
         last_name = user.getLastName();
         fb_email = (String) user.getProperty("email");
         fb_image = "https://graph.facebook.com/" + fb_id + "/picture";
-        // Remove when finished testing.
-        System.out.println("USER INFO! ---> " + fb_id + "; " + first_name + "; " +
-            last_name + "; " + fb_email + "; ");
 	}
 	
 	/** Starts the feed activity after passing api_key to the feed. */
 	private void signIn() {
-//		if (isAdded()) {
+		if (isAdded()) {
 			System.out.println("%%%Fragment added!");
 			getActivity().finish();
 			Intent feed = new Intent(getActivity(), Feed.class);
 			feed.putExtra("API_KEY", api_key);
 			startActivity(feed);
-//		}
+		}
 	}
 	
 	private class SignInTask extends AsyncTask<Object, Void, Object[]> {
@@ -220,12 +222,6 @@ public class FbFragment extends Fragment {
 	    }
 
 	    protected void onPostExecute(Object[] result) {
-	    	// tv1 appears after the signin button is released; for testing purposes
-//			TextView tv1 = (TextView) getActivity().findViewById(R.id.testing);
-//	        Spannable title = new SpannableString(tv1.getText());
-//	        title.setSpan(new RelativeSizeSpan(1f), 0, title.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-//	        tv1.setText("api_key: " + result[1]);
-	        
 	        if ((Boolean) result[0]) {
 	        	JSONObject user = (JSONObject) result[1];
 	        	try {

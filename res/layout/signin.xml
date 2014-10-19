@@ -68,13 +68,14 @@
         <com.facebook.widget.LoginButton
             android:id="@+id/authButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="14dp" />
 
-        <TextView
-            android:id="@+id/testing"
+        <TextView 
+            android:id="@+id/create_account_link"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="original text"
+            android:text="@string/create_account"
             android:textColor="@color/white" />
         
         <TextView

@@ -6,6 +6,7 @@
     <string name="password">password</string>
     <string name="signin">sign in</string>
     <string name="app_id">1397311873871771</string>
+    <string name="create_account"><u>Don\'t have an account?</u></string>
     
     <string name="user">Alice Meng</string>
     <string name="user_first_name">Alice</string>

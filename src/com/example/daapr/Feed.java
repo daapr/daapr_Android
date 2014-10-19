@@ -78,9 +78,6 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
-//			case R.id.home:
-//				refresh();
-//				return true;
 			case R.id.action_refresh:
 				refresh();
 				return true;
@@ -110,15 +107,22 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 				@Override
 				public void onCompleted(GraphUser fbUser, Response response) {
 					String currentUserFbId = sharedPref.getString("fb_id", null);
-					System.out.println("!!!OLD FB ID = " + currentUserFbId);
+					System.out.println("!!!DAAPR FB USER ID = " + currentUserFbId);
 					if (currentUserFbId != null && fbUser.getId().equals(currentUserFbId)) {
-						System.out.println("!!!old fb id not null! Current fb user id = " + fbUser.getId());
+						System.out.println("!!!CURRENT FB USER ID " + fbUser.getId());
 						Session.getActiveSession().closeAndClearTokenInformation();
+						SharedPreferences.Editor editor = sharedPref.edit();
+						editor.remove("fb_id");
+						editor.commit();
 					}
 					signOutOfDaapr(sharedPref);
 				}
 			}).executeAsync();
 	    } else {
+	    	System.out.println("!!!FB SESSION INVALID :(");
+	    	if (session == null) { System.out.println("session is null"); }
+	    	else if (!session.isOpened()) { System.out.println("session is not open"); }
+	    	else if (session.isClosed()) { System.out.println("session is closed"); }
 			signOutOfDaapr(sharedPref);
 	    }
 	}
@@ -214,7 +218,7 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 		}
 
 		protected void onPostExecute(Object[] result) {
-			if ((Boolean) result[0]) {
+			if (result != null && (Boolean) result[0]) {
 				Object[] feed_array = (Object[]) result[1];
 				for (int i = 0; i < feed_array.length; i++) {
 					Card card = new Card(getApplicationContext(), feed_array[i]);

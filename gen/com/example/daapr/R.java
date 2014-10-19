@@ -1261,6 +1261,7 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_login_button=0x7f050057;
         public static final int com_facebook_usersettingsfragment_logo_image=0x7f050055;
         public static final int com_facebook_usersettingsfragment_profile_name=0x7f050056;
+        public static final int create_account_link=0x7f05006d;
         public static final int default_activity_button=0x7f05002a;
         public static final int dialog=0x7f050010;
         public static final int disableHome=0x7f05000a;
@@ -1317,7 +1318,6 @@ containing a value of this type.
         public static final int split_action_bar=0x7f050020;
         public static final int submit_area=0x7f05003b;
         public static final int tabMode=0x7f050004;
-        public static final int testing=0x7f05006d;
         public static final int textView1=0x7f05005c;
         public static final int textView2=0x7f05005d;
         public static final int time=0x7f050062;
@@ -1448,12 +1448,12 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f080025;
-        public static final int action_settings=0x7f080035;
-        public static final int add_post=0x7f080033;
+        public static final int action_settings=0x7f080036;
+        public static final int add_post=0x7f080034;
         public static final int app_id=0x7f08002b;
         public static final int app_name=0x7f080027;
-        public static final int card_source=0x7f08002f;
-        public static final int card_title=0x7f08002e;
+        public static final int card_source=0x7f080030;
+        public static final int card_title=0x7f08002f;
         public static final int com_facebook_choose_friends=0x7f08000f;
         public static final int com_facebook_dialogloginactivity_ok_button=0x7f080000;
         public static final int com_facebook_internet_permission_error_message=0x7f080013;
@@ -1480,21 +1480,22 @@ containing a value of this type.
         public static final int com_facebook_usersettingsfragment_log_in_button=0x7f080008;
         public static final int com_facebook_usersettingsfragment_logged_in=0x7f080009;
         public static final int com_facebook_usersettingsfragment_not_logged_in=0x7f08000a;
-        public static final int discover_users=0x7f080034;
+        public static final int create_account=0x7f08002c;
+        public static final int discover_users=0x7f080035;
         public static final int email=0x7f080028;
-        public static final int followers=0x7f080036;
-        public static final int following=0x7f080037;
-        public static final int notifications=0x7f080032;
+        public static final int followers=0x7f080037;
+        public static final int following=0x7f080038;
+        public static final int notifications=0x7f080033;
         public static final int password=0x7f080029;
-        public static final int posts=0x7f080038;
-        public static final int refresh=0x7f08003b;
-        public static final int reshare_string=0x7f080039;
+        public static final int posts=0x7f080039;
+        public static final int refresh=0x7f08003c;
+        public static final int reshare_string=0x7f08003a;
         public static final int signin=0x7f08002a;
-        public static final int signout=0x7f08003a;
-        public static final int test_card_name=0x7f080031;
-        public static final int time=0x7f080030;
-        public static final int user=0x7f08002c;
-        public static final int user_first_name=0x7f08002d;
+        public static final int signout=0x7f08003b;
+        public static final int test_card_name=0x7f080032;
+        public static final int time=0x7f080031;
+        public static final int user=0x7f08002d;
+        public static final int user_first_name=0x7f08002e;
     }
     public static final class style {
         /** 

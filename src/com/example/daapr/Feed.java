@@ -1,20 +1,13 @@
 package com.example.daapr;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import org.apache.http.message.BasicNameValuePair;
 
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.android.Facebook;
-import com.facebook.model.GraphUser;
+import org.apache.http.message.BasicNameValuePair;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -30,14 +23,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.model.GraphUser;
 
-public class Feed extends ActionBarActivity {
+
+public class Feed extends ActionBarActivity implements OnScrollListener, OnItemClickListener {
 	String api_key;
 	int current_length;
 	String last_time_synchronized;
@@ -49,6 +48,9 @@ public class Feed extends ActionBarActivity {
 	String url = "https://orangeseven7.com/rest_append_feed?";
 	private ListView feed_listview;
 	CardAdapter adapter;
+	private int taskCounter;
+	private boolean feedLoading;
+	private ArrayList<Card> loadingData;
 
 	@SuppressLint({ "SimpleDateFormat", "NewApi" })
 	@Override
@@ -76,6 +78,9 @@ public class Feed extends ActionBarActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
 		switch (item.getItemId()) {
+//			case R.id.home:
+//				refresh();
+//				return true;
 			case R.id.action_refresh:
 				refresh();
 				return true;
@@ -97,7 +102,7 @@ public class Feed extends ActionBarActivity {
 	private void signOut() {
 		final SharedPreferences sharedPref = getSharedPreferences(
 				"com.example.daapr.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
-		// check if valid session and if the current fb user id == daapr fb id
+		// check if valid Facebook session and if the current fb user id == daapr fb id
 		Session session = Session.getActiveSession();
 	    if (session != null && session.isOpened()) {
 	    	System.out.println("!!!VALID FB SESSION");
@@ -131,6 +136,9 @@ public class Feed extends ActionBarActivity {
 
 	@SuppressLint("SimpleDateFormat")
 	public void updateParams(int new_length, String last_time_synchronized) {
+		taskCounter = 0;
+		feedLoading = true;
+		loadingData = new ArrayList<Card>();
 		List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
 		// Set last_time_synchronized to current time if it has not been set yet
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
@@ -149,55 +157,49 @@ public class Feed extends ActionBarActivity {
 	public void configureAdapter(ArrayList<Card> card_data) {
 		// Adapt cards to views to be put in the listview
 		if (feed_listview.getAdapter() == null) {
-			adapter = new CardAdapter(context, R.layout.listview_card,
-					card_data);
+			adapter = new CardAdapter(context, R.layout.listview_card, card_data);
 			feed_listview.setAdapter(adapter);
+			feed_listview.setOnScrollListener(this);
+			feed_listview.setOnItemClickListener(this);
 		} else {
 			adapter.getData().addAll(card_data);
 			adapter.notifyDataSetChanged();
 		}
-		feed_listview.setOnScrollListener(new AbsListView.OnScrollListener() {
-			@Override
-			public void onScroll(AbsListView view, int firstVisible,
-			int visibleCount, int totalCount) {
-				boolean loadMore = /* maybe add a padding */
-				firstVisible + visibleCount >= totalCount - 5;
-				if (loadMore) {
-					current_length += adapter.getCount();
-					adapter.setCount(adapter.getCount() + visibleCount);
-					System.out.println("TOTAL ADAPTER COUNT = "
-							+ adapter.getCount());
-					((CardAdapter) feed_listview.getAdapter())
-						.notifyDataSetChanged();
-					updateParams(current_length, last_time_synchronized);
-				}
+	}
+	
+	// Set listview items to have onItemClickListeners. Opens link (no
+	// intermediate view.
+	// For intermediate view, see
+	// http://stackoverflow.com/questions/6867372/add-onclicklistener-to-listview-item.
+	// See
+	// http://stackoverflow.com/questions/18818279/listview-to-open-hyperlinks-in-android.
+	@Override
+	public void onScroll(AbsListView view, int firstVisible, int visibleCount, int totalCount) {
+		
+		if (!feedLoading) {
+			boolean loadMore = firstVisible + visibleCount >= totalCount - 5;
+			if (loadMore) {
+				current_length += adapter.getCount();
+				adapter.setCount(adapter.getCount() + visibleCount);
+				updateParams(current_length, last_time_synchronized);
 			}
+		}
+	}
+	
+	@Override
+	public void onScrollStateChanged(AbsListView v, int s) {
 
-			@Override
-			public void onScrollStateChanged(AbsListView v, int s) {
-
-			}
-		});
-
-		// Set listview items to have onItemClickListeners. Opens link (no
-		// intermediate view.
-		// For intermediate view, see
-		// http://stackoverflow.com/questions/6867372/add-onclicklistener-to-listview-item.
-		// See
-		// http://stackoverflow.com/questions/18818279/listview-to-open-hyperlinks-in-android.
-		feed_listview.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View v, int position,
-					long id) {
-				// RelativeLayout card_options_layout = showCardOptions();
-				// feed_listview.addView(card_options_layout);
-				// feed_listview.invalidate();
-				String url = adapter.getItem(position).getUrl();
-				Intent i = new Intent(Intent.ACTION_VIEW);
-				i.setData(Uri.parse(url));
-				startActivity(i);
-			}
-		});
+	}
+	
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
+		// RelativeLayout card_options_layout = showCardOptions();
+		// feed_listview.addView(card_options_layout);
+		// feed_listview.invalidate();
+		String url = adapter.getItem(position).getUrl();
+		Intent i = new Intent(Intent.ACTION_VIEW);
+		i.setData(Uri.parse(url));
+		startActivity(i);
 	}
 
 	/**
@@ -251,7 +253,14 @@ public class Feed extends ActionBarActivity {
 				card.setImageDrawable(img);
 				ArrayList<Card> cardArray = new ArrayList<Card>();
 				cardArray.add(card);
-				configureAdapter(cardArray);
+				
+				taskCounter++;
+				if (taskCounter >= 19) {
+					feedLoading = false;
+					configureAdapter(loadingData);
+				} else {
+					loadingData.addAll(cardArray);
+				}
 			}
 		}
 	}

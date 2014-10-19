@@ -80,6 +80,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
 			holder.tv_source = (TextView) row.findViewById(R.id.source);
 			holder.tv_user = (TextView) row.findViewById(R.id.user);
 			holder.tv_time = (TextView) row.findViewById(R.id.time);
+			holder.iv = (ImageView) row.findViewById(R.id.card_image);
 			// store the holder with the view
 			row.setTag(holder);
 		} else {
@@ -90,22 +91,11 @@ public class CardAdapter extends ArrayAdapter<Card> {
 			Card card = data.get(position);
 			// assign values if the object is not null
 			if (card != null) {
-				holder.tv_title.setTextColor(context.getResources().getColor(
-						R.color.daapr_blue));
 				holder.tv_title.setText(card.getCardTitle());
-				holder.tv_source.setTextColor(context.getResources().getColor(
-						R.color.source_gray));
 				holder.tv_source.setText(card.getSiteName());
-				holder.tv_user.setTextColor(context.getResources().getColor(
-						R.color.daapr_blue));
 				holder.tv_user.setText(card.getMicropostUserName());
 				holder.tv_time.setText(card.getReshareCreatedAt());
-				holder.iv = (ImageView) row.findViewById(R.id.card_image);
-				if (card.getImageDrawable() != null) {
-					holder.iv.setImageDrawable(card.getImageDrawable());
-				} else {
-					holder.iv.setImageResource(R.drawable.wieber);
-				}
+				holder.iv.setImageDrawable(card.getImageDrawable());
 			}
 		}
 		return row;

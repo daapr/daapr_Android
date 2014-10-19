@@ -71,9 +71,10 @@ public class FbFragment extends Fragment {
 	    Session session = Session.getActiveSession();
 	    if (session != null &&
 	           (session.isOpened() || session.isClosed()) ) {
-	        onSessionStateChange(session, session.getState(), null);
+//	        onSessionStateChange(session, session.getState(), null);
 	    }
 	    uiHelper.onResume();
+	    System.out.println("^^^In on resume!");
 	}
 
 	@Override
@@ -143,6 +144,7 @@ public class FbFragment extends Fragment {
 		} else {
 			// go to feed
 			api_key = session_api_key;
+			System.out.println("%%%Session api key not null; about to sign in");
 			signIn();
 			return null;
 		}
@@ -162,6 +164,7 @@ public class FbFragment extends Fragment {
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
 		if (state.isOpened()) {
 	        Request.newMeRequest(session, new Request.GraphUserCallback() {
+	        	boolean calledSignIn = false;
 				@Override
 				public void onCompleted(GraphUser user, Response response) {
 					if (user != null) {
@@ -176,10 +179,15 @@ public class FbFragment extends Fragment {
 				    	urlParams.add(new BasicNameValuePair("last_name", last_name));
 				    	urlParams.add(new BasicNameValuePair("image", fb_image));
 				    	urlParams.add(new BasicNameValuePair("facebook_id", fb_id));
-				    	new SignInTask().execute(url, urlParams);
+				    	if (!calledSignIn) {
+				    		System.out.println("&^&^&Calling sign in via FB");
+				    		calledSignIn = true;
+				    		new SignInTask().execute(url, urlParams);
+				    	}
 		            }
 				}
             }).executeAsync();
+//	        getActivity().finish();
 	    }
 	}
 	
@@ -196,9 +204,13 @@ public class FbFragment extends Fragment {
 	
 	/** Starts the feed activity after passing api_key to the feed. */
 	private void signIn() {
-		Intent feed = new Intent(getActivity(), Feed.class);
-		feed.putExtra("API_KEY", api_key);
-		startActivity(feed);
+//		if (isAdded()) {
+			System.out.println("%%%Fragment added!");
+			getActivity().finish();
+			Intent feed = new Intent(getActivity(), Feed.class);
+			feed.putExtra("API_KEY", api_key);
+			startActivity(feed);
+//		}
 	}
 	
 	private class SignInTask extends AsyncTask<Object, Void, Object[]> {
@@ -209,10 +221,10 @@ public class FbFragment extends Fragment {
 
 	    protected void onPostExecute(Object[] result) {
 	    	// tv1 appears after the signin button is released; for testing purposes
-			TextView tv1 = (TextView) getActivity().findViewById(R.id.testing);
+//			TextView tv1 = (TextView) getActivity().findViewById(R.id.testing);
 //	        Spannable title = new SpannableString(tv1.getText());
 //	        title.setSpan(new RelativeSizeSpan(1f), 0, title.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-	        tv1.setText("api_key: " + result[1]);
+//	        tv1.setText("api_key: " + result[1]);
 	        
 	        if ((Boolean) result[0]) {
 	        	JSONObject user = (JSONObject) result[1];
@@ -226,6 +238,7 @@ public class FbFragment extends Fragment {
 				editor.putString("api_key", api_key);
 				editor.putString("fb_id", fb_id);
 				editor.commit();
+				System.out.println("%%%On post execute; about to sign in");
 	        	signIn();
 	        } else {
 	        	TextView error = (TextView) getActivity().findViewById(R.id.signin_error_tv);

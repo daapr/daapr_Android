@@ -91,6 +91,7 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 
 	/** Refresh the feed. */
 	private void refresh() {
+		updateLastTimeSynch();
 		finish();
 		startActivity(getIntent());
 	}
@@ -139,73 +140,29 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 	}
 
 	@SuppressLint("SimpleDateFormat")
-	public void updateParams(int new_length, String last_time_synchronized) {
+	private void updateLastTimeSynch() {
+		// Set last_time_synchronized to current time if it has not been set yet
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
+		Calendar cal = Calendar.getInstance();
+		String time = dateFormat.format(cal.getTime());
+		last_time_synchronized = time;
+	}
+	
+	public void updateParams(int new_length, String old_last_time_synchronized) {
 		taskCounter = 0;
 		feedLoading = true;
 		loadingData = new ArrayList<Card>();
 		List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
-		// Set last_time_synchronized to current time if it has not been set yet
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy/MM/dd HH:mm:ss Z");
-		Calendar cal = Calendar.getInstance();
-		String time = dateFormat.format(cal.getTime());
-		last_time_synchronized = time;
+		if (old_last_time_synchronized == null) {
+			System.out.println("~~~Synchronizing time");
+			updateLastTimeSynch();
+		}
 		urlParams.add(new BasicNameValuePair("api_key", api_key));
-		urlParams
-			.add(new BasicNameValuePair("current_length", "" + new_length));
-		urlParams.add(new BasicNameValuePair("last_time_synchronized",
-		last_time_synchronized));
+		urlParams.add(new BasicNameValuePair("current_length", "" + new_length));
+		urlParams.add(new BasicNameValuePair("last_time_synchronized", last_time_synchronized));
 		new FeedTask().execute(url, urlParams);
 	}
-
-	public void configureAdapter(ArrayList<Card> card_data) {
-		// Adapt cards to views to be put in the listview
-		if (feed_listview.getAdapter() == null) {
-			adapter = new CardAdapter(context, R.layout.listview_card, card_data);
-			feed_listview.setAdapter(adapter);
-			feed_listview.setOnScrollListener(this);
-			feed_listview.setOnItemClickListener(this);
-		} else {
-			adapter.getData().addAll(card_data);
-			adapter.notifyDataSetChanged();
-		}
-	}
 	
-	// Set listview items to have onItemClickListeners. Opens link (no
-	// intermediate view.
-	// For intermediate view, see
-	// http://stackoverflow.com/questions/6867372/add-onclicklistener-to-listview-item.
-	// See
-	// http://stackoverflow.com/questions/18818279/listview-to-open-hyperlinks-in-android.
-	@Override
-	public void onScroll(AbsListView view, int firstVisible, int visibleCount, int totalCount) {
-		
-		if (!feedLoading) {
-			boolean loadMore = firstVisible + visibleCount >= totalCount - 5;
-			if (loadMore) {
-				current_length += adapter.getCount();
-				adapter.setCount(adapter.getCount() + visibleCount);
-				updateParams(current_length, last_time_synchronized);
-			}
-		}
-	}
-	
-	@Override
-	public void onScrollStateChanged(AbsListView v, int s) {
-
-	}
-	
-	@Override
-	public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
-		// RelativeLayout card_options_layout = showCardOptions();
-		// feed_listview.addView(card_options_layout);
-		// feed_listview.invalidate();
-		String url = adapter.getItem(position).getUrl();
-		Intent i = new Intent(Intent.ACTION_VIEW);
-		i.setData(Uri.parse(url));
-		startActivity(i);
-	}
-
 	/**
 	 * Background thread that sends an Http POST request to append new feed
 	 * items.
@@ -213,13 +170,13 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 	private class FeedTask extends AsyncTask<Object, Void, Object[]> {
 		@SuppressWarnings("unchecked")
 		protected Object[] doInBackground(Object... params) {
-			return HTTP.append_feed((String) params[0],
-					(List<BasicNameValuePair>) params[1]);
+			return HTTP.append_feed((String) params[0], (List<BasicNameValuePair>) params[1]);
 		}
 
 		protected void onPostExecute(Object[] result) {
 			if (result != null && (Boolean) result[0]) {
 				Object[] feed_array = (Object[]) result[1];
+				System.out.println("~~~Connor is returning me " + feed_array.length + " cards");
 				for (int i = 0; i < feed_array.length; i++) {
 					Card card = new Card(getApplicationContext(), feed_array[i]);
 					new LoadImageTask().execute(card);
@@ -231,20 +188,44 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 			}
 		}
 	}
+	
+	@Override
+	public void onScroll(AbsListView view, int firstVisible, int visibleCount, int totalCount) {
+		if (!feedLoading) {
+			boolean loadMore = firstVisible + visibleCount >= totalCount - 5;
+			if (loadMore) {
+				current_length += 20;
+				adapter.setCount(adapter.getCount() + 20);
+				updateParams(current_length, last_time_synchronized);
+			}
+		}
+	}
+	
+	@Override
+	public void onScrollStateChanged(AbsListView v, int s) {}
+	
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View v, int position, long id) {
+		String url = adapter.getItem(position).getUrl();
+		Intent i = new Intent(Intent.ACTION_VIEW);
+		i.setData(Uri.parse(url));
+		startActivity(i);
+	}
 
 	/** Loads images from image_url into the card */
 	class LoadImageTask extends AsyncTask<Card, Void, ArrayList<Object>> {
 		protected ArrayList<Object> doInBackground(Card... params) {
 			try {
-				InputStream is = (InputStream) new URL(params[0].getImageUrl())
-					.getContent();
-				Drawable d = Drawable.createFromStream(is,
-				params[0].getSiteName());
+				InputStream is = (InputStream) new URL(params[0].getImageUrl()).getContent();
+				Drawable d = Drawable.createFromStream(is, params[0].getSiteName());
 				ArrayList<Object> tuple = new ArrayList<Object>();
 				tuple.add(d);
 				tuple.add(params[0]);
 				return tuple;
 			} catch (Exception e) {
+				synchronized(this) {
+					taskCounter++;
+				}
 				e.printStackTrace();
 				return null;
 			}
@@ -258,14 +239,30 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 				ArrayList<Card> cardArray = new ArrayList<Card>();
 				cardArray.add(card);
 				
-				taskCounter++;
-				if (taskCounter >= 19) {
-					feedLoading = false;
-					configureAdapter(loadingData);
-				} else {
-					loadingData.addAll(cardArray);
+				synchronized(this) {
+					taskCounter++;
+					if (taskCounter > 19) {
+						loadingData.addAll(cardArray);
+						feedLoading = false;
+						configureAdapter(loadingData);
+					} else {
+						loadingData.addAll(cardArray);
+					}
 				}
 			}
+		}
+	}
+	
+	public void configureAdapter(ArrayList<Card> card_data) {
+		// Adapt cards to views to be put in the listview
+		if (feed_listview.getAdapter() == null) {
+			adapter = new CardAdapter(context, R.layout.listview_card, card_data);
+			feed_listview.setAdapter(adapter);
+			feed_listview.setOnScrollListener(this);
+			feed_listview.setOnItemClickListener(this);
+		} else {
+			adapter.getData().addAll(card_data);
+			adapter.notifyDataSetChanged();
 		}
 	}
 }

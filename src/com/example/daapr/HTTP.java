@@ -28,41 +28,6 @@ import android.annotation.SuppressLint;
 
 public class HTTP {
 	
-	/** Sends an Http GET request given the source path and urlParams. See example at
-	 *  http://stackoverflow.com/questions/20321799/android-http-get. Uses Apache. */
-	public static String getData(String path, List<BasicNameValuePair> urlParams) throws URISyntaxException {
-		HttpResponse response = null;
-	    HttpClient httpclient = new DefaultHttpClient();
-	    HttpGet request = null;
-	    request = new HttpGet();
-	    try {
-	        // Add the data
-	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-	        for (BasicNameValuePair data : urlParams) {
-	        	nameValuePairs.add(data);
-	        }
-	    	URI website = new URI(path+ "email=happymealsadarteries%40gmail.com&password=password123");
-	    	request.setURI(website);
-
-	    	// Print the HTTP method to make sure it's get
-	    	System.out.println("Http method: " + request.getMethod());
-	        // Execute HTTP Get Request
-	    	response = httpclient.execute(request);
-	        
-	        String responseString = new BasicResponseHandler().handleResponse(response);
-	        System.out.println(responseString);
-	        return responseString;
-	        
-	    } catch (ClientProtocolException e) {
-	    	e.printStackTrace();
-	    	System.out.println("http code is " + response.getStatusLine().toString());
-	    	return "Client error";
-	    } catch (IOException e) {
-	    	e.printStackTrace();
-	    	return "IO error";
-	    }
-	}
-	
 	/** Sends an Http POST request given the source path and urlParams. See example at
 	 *  http://stackoverflow.com/questions/2938502/sending-post-data-in-android. Uses Apache. */
 	public static Object[] sign_in(String path, List<BasicNameValuePair> urlParams) {
@@ -82,12 +47,9 @@ public class HTTP {
 	        //For testing purposes only
 	    	String content = EntityUtils.toString(entity);
 	    	System.out.println("URL is: " + path + content);
-	    	// Print HTTP method to make sure it's POST
-	    	System.out.println("Http method: " + httppost.getMethod());
 	        
 	    	// Execute HTTP Post Request
 	    	response = httpclient.execute(httppost);
-	    	System.out.println("HTTP response is: " + response);
 	    	// Convert HTTP response into JSONArray
 	    	BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 	    	StringBuilder builder = new StringBuilder();
@@ -95,7 +57,6 @@ public class HTTP {
 	    	    builder.append(line).append("\n");
 	    	}
 	    	JSONTokener tokener = new JSONTokener(builder.toString());
-	    	System.out.println("Tokener is...." + tokener);
 			JSONArray jsonArray = new JSONArray(tokener);
 			// Convert JSONArray into array result
 	    	Object[] result = new Object[jsonArray.length()];
@@ -103,20 +64,13 @@ public class HTTP {
 	    		result[i] = jsonArray.get(i);
 	    	}
 	    	return result;
-			
-	        // Convert response to string
-//	        String responseString = new BasicResponseHandler().handleResponse(response);
-//	        System.out.println("The API key is " + responseString);
-//	        return responseString;
 	    } catch (ClientProtocolException e) {
 	    	e.printStackTrace();
-	    	System.out.println("http code is " + response.getStatusLine().toString());
 	    	return null;
 	    } catch (IOException e) {
 	    	e.printStackTrace();
 	    	return null;
 	    } catch (JSONException e) {
-	    	System.out.println("In json exception for sign in");
 			e.printStackTrace();
 			return null;
 		}

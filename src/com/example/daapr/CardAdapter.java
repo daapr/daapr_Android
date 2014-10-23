@@ -50,20 +50,15 @@ public class CardAdapter extends ArrayAdapter<Card> {
 	}
 
 	public void setCount(int count) {
-		this.count += count;
-
+		this.count = count;
 	}
 
 	public long getItemId(int pos) {
-
 		return pos;
-
 	}
 
 	public ArrayList<Card> getData() {
-
 		return data;
-
 	}
 
 	@Override

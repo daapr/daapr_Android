@@ -42,11 +42,11 @@ public class FbFragment extends Fragment {
 	String api_key; // attribute needed for sign in (regular and FB)
 	SharedPreferences sharedPref; // tracks app's session state
 	
-	// Returns if a network connection is available. Used for debugging.
+	/** Returns if a network connection is available. Used for debugging. */
 	public boolean availableConnection() {
 	    ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-	    return (networkInfo != null && networkInfo.isConnected()); // fetch data if true; else display error
+	    return (networkInfo != null && networkInfo.isConnected());
 	}
 
 	private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
@@ -66,16 +66,7 @@ public class FbFragment extends Fragment {
 	@Override
 	public void onResume() {
 	    super.onResume();
-	    // For scenarios where the main activity is launched and user
-	    // session is not null, the session state change notification
-	    // may not be triggered. Trigger it if it's open/closed.
-	    Session session = Session.getActiveSession();
-	    if (session != null &&
-	           (session.isOpened() || session.isClosed()) ) {
-//	        onSessionStateChange(session, session.getState(), null);
-	    }
 	    uiHelper.onResume();
-	    System.out.println("^^^In on resume!");
 	}
 
 	@Override
@@ -119,7 +110,6 @@ public class FbFragment extends Fragment {
 			btn.setOnClickListener(new View.OnClickListener() {
 			    @Override
 			    public void onClick(View v) {
-			    	System.out.println("IN ON CLICK FOR SIGN IN in fragment onCreateView");
 				    try {
 				    	String url = "https://orangeseven7.com/rest_sign_in?";
 						String email = "test@example.com";
@@ -155,7 +145,6 @@ public class FbFragment extends Fragment {
 		} else {
 			// go to feed
 			api_key = session_api_key;
-			System.out.println("%%%Session api key not null; about to sign in");
 			signIn();
 			return null;
 		}
@@ -207,7 +196,6 @@ public class FbFragment extends Fragment {
 	/** Starts the feed activity after passing api_key to the feed. */
 	private void signIn() {
 		if (isAdded()) {
-			System.out.println("%%%Fragment added!");
 			getActivity().finish();
 			Intent feed = new Intent(getActivity(), Feed.class);
 			feed.putExtra("API_KEY", api_key);
@@ -234,7 +222,6 @@ public class FbFragment extends Fragment {
 				editor.putString("api_key", api_key);
 				editor.putString("fb_id", fb_id);
 				editor.commit();
-				System.out.println("%%%On post execute; about to sign in");
 	        	signIn();
 	        } else {
 	        	TextView error = (TextView) getActivity().findViewById(R.id.signin_error_tv);

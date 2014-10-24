@@ -3,12 +3,14 @@ package com.example.daapr;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
+
+import org.ocpsoft.prettytime.PrettyTime;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
-import org.ocpsoft.prettytime.PrettyTime;
 
 public class Card extends Activity {
 	// #0-micropost_id, 1-url,
@@ -55,15 +57,23 @@ public class Card extends Activity {
 	
 	private String prettyTime(String uglyTime) {
 		Date postDate = null;
+		Date updatedDate = null;
 		try {
-			String time = uglyTime.substring(0, uglyTime.length()); 
-			postDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(time); //find out if HH or hh from conner?
+			String time = uglyTime.substring(0, uglyTime.length());
+			System.out.println("---Ugly time is " + time);
+			postDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(time);
+			TimeZone tz = TimeZone.getDefault();
+			updatedDate = new Date(postDate.getTime() + tz.getOffset(postDate.getTime()));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		} finally {
-			if (postDate != null) {
+			if (updatedDate != null) {
 				PrettyTime p = new PrettyTime();
-				return p.format(postDate);
+				String temp_p = p.format(updatedDate);
+				if (temp_p.indexOf("from now") != -1) {
+					temp_p = temp_p.substring(0, temp_p.indexOf("from now")) + "ago";
+				}
+				return temp_p;
 			}
 		}
 		return null;

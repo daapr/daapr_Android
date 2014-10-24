@@ -223,11 +223,15 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 				tuple.add(params[0]);
 				return tuple;
 			} catch (Exception e) {
+				e.printStackTrace();
 				synchronized(this) {
 					taskCounter++;
 				}
-				e.printStackTrace();
-				return null;
+				Drawable d = getResources().getDrawable(R.drawable.appicon);
+				ArrayList<Object> tuple = new ArrayList<Object>();
+				tuple.add(d);
+				tuple.add(params[0]);
+				return tuple;
 			}
 		}
 

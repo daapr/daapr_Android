@@ -15,8 +15,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -37,18 +35,11 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 
 public class FbFragment extends Fragment {
-	String fb_id, first_name, last_name, fb_email, fb_image; // attributes needed for FB login
+	private String fb_id, first_name, last_name, fb_email, fb_image; // attributes needed for FB login
 	private UiLifecycleHelper uiHelper; // helps track fragment state changes
-	String api_key; // attribute needed for sign in (regular and FB)
-	SharedPreferences sharedPref; // tracks app's session state
+	private String api_key; // attribute needed for sign in (regular and FB)
+	private SharedPreferences sharedPref; // tracks app's session state
 	
-	/** Returns if a network connection is available. Used for debugging. */
-	public boolean availableConnection() {
-	    ConnectivityManager connMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-	    return (networkInfo != null && networkInfo.isConnected());
-	}
-
 	private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
 	    @Override
 	    public void call(Session session, SessionState state, Exception exception) {
@@ -111,12 +102,12 @@ public class FbFragment extends Fragment {
 			    @Override
 			    public void onClick(View v) {
 				    try {
-				    	String url = "https://orangeseven7.com/rest_sign_in?";
-						String email = "test@example.com";
-						String password = "testing123";
+//						String email = "test@example.com";
+//						String password = "testing123";
 				    	// Replace with below code when using the actual user's inputs
-//				    	String email = email_et.getText().toString();
-//				    	String password = password_et.getText().toString();
+				    	String url = "https://orangeseven7.com/rest_sign_in?";
+				    	String email = email_et.getText().toString();
+				    	String password = password_et.getText().toString();
 						List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
 				        urlParams.add(new BasicNameValuePair("email", email));
 				    	urlParams.add(new BasicNameValuePair("password", password));
@@ -225,8 +216,10 @@ public class FbFragment extends Fragment {
 	        	signIn();
 	        } else {
 	        	TextView error = (TextView) getActivity().findViewById(R.id.signin_error_tv);
-	        	error.setVisibility(0);
+	        	error.setVisibility(View.VISIBLE);
 	        	error.setText((String) result[1]);
+	        	error.invalidate();
+//	        	System.out.println("Error message: " + (String) result[1]);
 	        }
 	    }
 	}

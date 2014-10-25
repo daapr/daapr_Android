@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:background="@color/dark_gray" >
+
+    <TextView
+        android:id="@+id/connect_again_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/no_internet_tv"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="Please connect to the internet before trying again."
+        android:textColor="@color/white"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/no_internet_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="No internet available!"
+        android:textColor="@color/white"
+        android:textSize="27sp" />
+
+</RelativeLayout>

@@ -27,7 +27,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.facebook.Request;
@@ -40,17 +39,13 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 	String api_key;
 	int current_length;
 	String last_time_synchronized;
-	static int CARD_WIDTH = 200;
-	static int MP = LayoutParams.MATCH_PARENT;
-	static int WP = LayoutParams.WRAP_CONTENT;
 	Context context;
-	int initial_feed_length = 20;
-	String url = "https://orangeseven7.com/rest_append_feed?";
 	private ListView feed_listview;
 	CardAdapter adapter;
 	private int taskCounter;
 	private boolean feedLoading;
 	private ArrayList<Card> loadingData;
+	String url = "https://orangeseven7.com/rest_append_feed?";
 
 	@SuppressLint({ "SimpleDateFormat", "NewApi" })
 	@Override
@@ -154,7 +149,6 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 		loadingData = new ArrayList<Card>();
 		List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
 		if (old_last_time_synchronized == null) {
-			System.out.println("~~~Synchronizing time");
 			updateLastTimeSynch();
 		}
 		urlParams.add(new BasicNameValuePair("api_key", api_key));
@@ -176,15 +170,15 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 		protected void onPostExecute(Object[] result) {
 			if (result != null && (Boolean) result[0]) {
 				Object[] feed_array = (Object[]) result[1];
-				System.out.println("~~~Connor is returning me " + feed_array.length + " cards");
 				for (int i = 0; i < feed_array.length; i++) {
 					Card card = new Card(getApplicationContext(), feed_array[i]);
 					new LoadImageTask().execute(card);
 				}
 			} else {
 				TextView error = (TextView) findViewById(R.id.feed_error_tv);
-				error.setVisibility(0); // set to visible
-				error.setText((String) result[1]);
+				error.setVisibility(View.VISIBLE);
+	        	error.setText((String) result[1]);
+	        	error.invalidate();
 			}
 		}
 	}
@@ -194,8 +188,8 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 		if (!feedLoading) {
 			boolean loadMore = firstVisible + visibleCount >= totalCount - 5;
 			if (loadMore) {
-				current_length += 20;
-				adapter.setCount(adapter.getCount() + 20);
+				current_length += 20; // TODO: Most of the time will be 20, but should be length that Connor returns
+				adapter.setCount(adapter.getCount() + 20); // TODO: Same as above comment
 				updateParams(current_length, last_time_synchronized);
 			}
 		}
@@ -224,9 +218,6 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 				return tuple;
 			} catch (Exception e) {
 				e.printStackTrace();
-				synchronized(this) {
-					taskCounter++;
-				}
 				Drawable d = getResources().getDrawable(R.drawable.appicon);
 				ArrayList<Object> tuple = new ArrayList<Object>();
 				tuple.add(d);
@@ -265,8 +256,10 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 			feed_listview.setOnScrollListener(this);
 			feed_listview.setOnItemClickListener(this);
 		} else {
-			adapter.getData().addAll(card_data);
-			adapter.notifyDataSetChanged();
+			synchronized(this) {
+				adapter.getData().addAll(card_data);
+				adapter.notifyDataSetChanged();
+			}
 		}
 	}
 }

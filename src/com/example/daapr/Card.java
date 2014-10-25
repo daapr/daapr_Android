@@ -7,6 +7,7 @@ import java.util.TimeZone;
 
 import org.ocpsoft.prettytime.PrettyTime;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -55,12 +56,12 @@ public class Card extends Activity {
 		micropostUserName = (String) card_array[7];
 	}
 	
+	@SuppressLint("SimpleDateFormat")
 	private String prettyTime(String uglyTime) {
 		Date postDate = null;
 		Date updatedDate = null;
 		try {
 			String time = uglyTime.substring(0, uglyTime.length());
-			System.out.println("---Ugly time is " + time);
 			postDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(time);
 			TimeZone tz = TimeZone.getDefault();
 			updatedDate = new Date(postDate.getTime() + tz.getOffset(postDate.getTime()));

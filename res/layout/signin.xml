@@ -82,7 +82,7 @@
             android:id="@+id/signin_error_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            android:visibility="visible"
             android:textColor="@color/white" />
 
     </LinearLayout>

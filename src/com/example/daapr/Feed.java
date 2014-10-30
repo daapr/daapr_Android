@@ -26,8 +26,10 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.Request;
 import com.facebook.Response;
@@ -46,12 +48,14 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 	private boolean feedLoading;
 	private ArrayList<Card> loadingData;
 	String url = "https://orangeseven7.com/rest_append_feed?";
+	LinearLayout linlaHeaderProgress;
 
 	@SuppressLint({ "SimpleDateFormat", "NewApi" })
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.feed);
+		linlaHeaderProgress = (LinearLayout) findViewById(R.id.linlaHeaderProgress);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		getActionBar().setDisplayUseLogoEnabled(true);
 		getActionBar().setHomeButtonEnabled(false);
@@ -59,6 +63,7 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 		api_key = getIntent().getStringExtra("API_KEY");
 		feed_listview = (ListView) findViewById(R.id.feed_list);
 		updateParams(current_length, last_time_synchronized);
+		
 	}
 
 	@Override
@@ -175,10 +180,8 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 					new LoadImageTask().execute(card);
 				}
 			} else {
-				TextView error = (TextView) findViewById(R.id.feed_error_tv);
-				error.setVisibility(View.VISIBLE);
-	        	error.setText((String) result[1]);
-	        	error.invalidate();
+	        	Toast toast = Toast.makeText(getApplicationContext(), "Oops. There was an error loading the feed.", Toast.LENGTH_SHORT);
+	        	toast.show();
 			}
 		}
 	}
@@ -208,6 +211,14 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 
 	/** Loads images from image_url into the card */
 	class LoadImageTask extends AsyncTask<Card, Void, ArrayList<Object>> {
+		
+		@Override
+		protected void onPreExecute() {
+			// TODO Auto-generated method stub
+			super.onPreExecute();
+			linlaHeaderProgress.setVisibility(View.VISIBLE);
+		}
+
 		protected ArrayList<Object> doInBackground(Card... params) {
 			try {
 				InputStream is = (InputStream) new URL(params[0].getImageUrl()).getContent();
@@ -261,5 +272,6 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 				adapter.notifyDataSetChanged();
 			}
 		}
+		linlaHeaderProgress.setVisibility(View.GONE);
 	}
 }

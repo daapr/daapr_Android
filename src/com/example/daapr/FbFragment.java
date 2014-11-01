@@ -19,12 +19,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.facebook.Request;
 import com.facebook.Response;
@@ -34,11 +38,12 @@ import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 
-public class FbFragment extends Fragment {
+public class FbFragment extends Fragment implements OnEditorActionListener {
 	private String fb_id, first_name, last_name, fb_email, fb_image; // attributes needed for FB login
 	private UiLifecycleHelper uiHelper; // helps track fragment state changes
 	private String api_key; // attribute needed for sign in (regular and FB)
 	private SharedPreferences sharedPref; // tracks app's session state
+	private Button btn;
 	
 	private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
 	    @Override
@@ -97,7 +102,7 @@ public class FbFragment extends Fragment {
 		    // Actual user input values
 	    	final EditText email_et = (EditText) view.findViewById(R.id.username_et);
 	    	final EditText password_et = (EditText) view.findViewById(R.id.password_et);
-			Button btn = (Button) view.findViewById(R.id.signin);
+			btn = (Button) view.findViewById(R.id.signin);
 			btn.setOnClickListener(new View.OnClickListener() {
 			    @Override
 			    public void onClick(View v) {
@@ -108,15 +113,30 @@ public class FbFragment extends Fragment {
 				    	String url = "https://orangeseven7.com/rest_sign_in?";
 				    	String email = email_et.getText().toString();
 				    	String password = password_et.getText().toString();
-						List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
-				        urlParams.add(new BasicNameValuePair("email", email));
-				    	urlParams.add(new BasicNameValuePair("password", password));
-				    	new SignInTask().execute(url, urlParams);
+				    	
+				    	System.out.println("password is " + password);
+				    	System.out.println("email is " + email);
+				    	
+				    	if (email.equals("")) {
+				    		Toast toast = Toast.makeText(getActivity(), "You must enter a valid email.", Toast.LENGTH_SHORT);
+				    		toast.show();
+				    	} else if (password.equals("")) {
+				    		Toast toast = Toast.makeText(getActivity(), "You must enter a valid password.", Toast.LENGTH_SHORT);
+				    		toast.show();
+				    	} else {
+							List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
+					        urlParams.add(new BasicNameValuePair("email", email));
+					    	urlParams.add(new BasicNameValuePair("password", password));
+					    	new SignInTask().execute(url, urlParams);
+				    	}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 			    }
 			});
+			
+			password_et.setOnEditorActionListener(this);
+			
 			// Set up on click for creating a new account
 			TextView newAccountLink = (TextView) view.findViewById(R.id.create_account_link);
 			newAccountLink.setOnClickListener(new View.OnClickListener() {
@@ -215,12 +235,19 @@ public class FbFragment extends Fragment {
 				editor.commit();
 	        	signIn();
 	        } else {
-	        	TextView error = (TextView) getActivity().findViewById(R.id.signin_error_tv);
-	        	error.setVisibility(View.VISIBLE);
-	        	error.setText((String) result[1]);
-	        	error.invalidate();
-//	        	System.out.println("Error message: " + (String) result[1]);
+	        	Toast toast = Toast.makeText(getActivity(), "Invalid email or password!", Toast.LENGTH_SHORT);
+	        	toast.show();
 	        }
 	    }
+	}
+
+	@Override
+	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		// TODO Auto-generated method stub
+		if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+			//automatically presses the sign in button when "done" or "return" is clicked on the keyboard.
+			btn.performClick();
+        }    
+		return false;
 	}
 }

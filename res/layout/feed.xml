@@ -1,20 +1,28 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/feed"
-	android:orientation="vertical" 
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#FFFFFF" > 
+    android:background="#FFFFFF"
+    android:orientation="vertical" >
 
-    <TextView
-	    android:id="@+id/feed_error_tv"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:visibility="gone"
-	    android:textColor="@color/white" />
-    
+    <LinearLayout
+        android:id="@+id/linlaHeaderProgress"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ProgressBar
+            android:id="@+id/pbHeaderProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </ProgressBar>
+    </LinearLayout>
+
     <ListView
-	    android:id="@+id/feed_list"
-   		android:layout_width="fill_parent"
-    	android:layout_height="fill_parent" />
- </LinearLayout>
+        android:id="@+id/feed_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+</LinearLayout>

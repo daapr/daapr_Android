@@ -13,7 +13,6 @@ public class Notifications extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		setContentView(R.layout.notifications);
 		
 		LinearLayout linearLayout= new LinearLayout(this);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -31,7 +30,6 @@ public class Notifications extends Activity {
         		LayoutParams.WRAP_CONTENT));
 
         //adding view to layout
-//        LinearLayout not_layout = (LinearLayout) findViewById(R.layout.notifications);
         linearLayout.addView(imageView);
         //make visible to program
         setContentView(linearLayout);
@@ -39,17 +37,4 @@ public class Notifications extends Activity {
         ActionBar actionBar = getActionBar();
 	    actionBar.setDisplayHomeAsUpEnabled(true);
 	}
-	
-//	@Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//    	// Inflate the menu items for use in the action bar
-//        return f.onCreateOptionsMenu(menu);
-//    }
-//	
-//	@Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle presses on the action bar items
-//		return f.onOptionsItemSelected(item);
-//	}
-
 }

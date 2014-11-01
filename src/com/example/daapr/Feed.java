@@ -28,7 +28,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.Request;
@@ -103,14 +102,11 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 		// check if valid Facebook session and if the current fb user id == daapr fb id
 		Session session = Session.getActiveSession();
 	    if (session != null && session.isOpened()) {
-	    	System.out.println("!!!VALID FB SESSION");
 			Request.newMeRequest(Session.getActiveSession(), new Request.GraphUserCallback() {
 				@Override
 				public void onCompleted(GraphUser fbUser, Response response) {
 					String currentUserFbId = sharedPref.getString("fb_id", null);
-					System.out.println("!!!DAAPR FB USER ID = " + currentUserFbId);
 					if (currentUserFbId != null && fbUser.getId().equals(currentUserFbId)) {
-						System.out.println("!!!CURRENT FB USER ID " + fbUser.getId());
 						Session.getActiveSession().closeAndClearTokenInformation();
 						SharedPreferences.Editor editor = sharedPref.edit();
 						editor.remove("fb_id");
@@ -120,10 +116,6 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 				}
 			}).executeAsync();
 	    } else {
-	    	System.out.println("!!!FB SESSION INVALID :(");
-	    	if (session == null) { System.out.println("session is null"); }
-	    	else if (!session.isOpened()) { System.out.println("session is not open"); }
-	    	else if (session.isClosed()) { System.out.println("session is closed"); }
 			signOutOfDaapr(sharedPref);
 	    }
 	}
@@ -229,7 +221,7 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 				return tuple;
 			} catch (Exception e) {
 				e.printStackTrace();
-				Drawable d = getResources().getDrawable(R.drawable.appicon);
+				Drawable d = getResources().getDrawable(R.drawable.default_icon);
 				ArrayList<Object> tuple = new ArrayList<Object>();
 				tuple.add(d);
 				tuple.add(params[0]);

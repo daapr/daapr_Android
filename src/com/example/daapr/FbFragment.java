@@ -170,7 +170,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 	}
 	
 	private void onSessionStateChange(Session session, SessionState state, Exception exception) {
-		if (state.isOpened()) {
+		if (!state.isClosed()) {
 	        Request.newMeRequest(session, new Request.GraphUserCallback() {
 				@Override
 				public void onCompleted(GraphUser user, Response response) {

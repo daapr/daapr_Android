@@ -48,6 +48,7 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 	private ArrayList<Card> loadingData;
 	String url = "https://orangeseven7.com/rest_append_feed?";
 	LinearLayout linlaHeaderProgress;
+	int numLoads = 0;
 
 	@SuppressLint({ "SimpleDateFormat", "NewApi" })
 	@Override
@@ -171,6 +172,9 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 					Card card = new Card(getApplicationContext(), feed_array[i]);
 					new LoadImageTask().execute(card);
 				}
+				synchronized (this) {
+					numLoads++;
+				}
 			} else {
 	        	Toast toast = Toast.makeText(getApplicationContext(), "Oops. There was an error loading the feed.", Toast.LENGTH_SHORT);
 	        	toast.show();
@@ -206,9 +210,10 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 		
 		@Override
 		protected void onPreExecute() {
-			// TODO Auto-generated method stub
 			super.onPreExecute();
-			linlaHeaderProgress.setVisibility(View.VISIBLE);
+			if (numLoads == 0) { // first feed load
+				linlaHeaderProgress.setVisibility(View.VISIBLE);
+			}
 		}
 
 		protected ArrayList<Object> doInBackground(Card... params) {
@@ -243,6 +248,7 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 						loadingData.addAll(cardArray);
 						feedLoading = false;
 						configureAdapter(loadingData);
+						adapter.notifyDoneLoading();
 					} else {
 						loadingData.addAll(cardArray);
 					}

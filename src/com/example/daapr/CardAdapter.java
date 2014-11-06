@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class CardAdapter extends ArrayAdapter<Card> {
@@ -18,6 +19,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
 	private Context context;
 	private int layoutResourceId;
 	private int count;
+	private boolean doneLoading = false;
 	
 	public CardAdapter(Context app_context, int layoutResourceId,
 					ArrayList<Card> data) {
@@ -43,6 +45,10 @@ public class CardAdapter extends ArrayAdapter<Card> {
 	public ArrayList<Card> getData() {
 		return data;
 	}
+	
+	public void notifyDoneLoading() {
+		doneLoading = true;
+	}
 
 	@Override
 	public View getView(int position, View convertView, final ViewGroup parent) {
@@ -59,10 +65,18 @@ public class CardAdapter extends ArrayAdapter<Card> {
 			holder.tv_user = (TextView) row.findViewById(R.id.user);
 			holder.tv_time = (TextView) row.findViewById(R.id.time);
 			holder.iv = (ImageView) row.findViewById(R.id.card_image);
+			if (((position + 1) % 20 == 0) && !doneLoading) {
+				holder.progressBar = (LinearLayout) row.findViewById(R.id.linlaHeaderProgress_card);
+				holder.progressBar.setVisibility(View.VISIBLE);
+			}
 			// store the holder with the view
 			row.setTag(holder);
 		} else {
 			holder = (CardHolder) row.getTag();
+			if (((position + 1) % 20 == 0) && doneLoading) {
+				holder.progressBar = (LinearLayout) row.findViewById(R.id.linlaHeaderProgress_card);
+				holder.progressBar.setVisibility(View.GONE);
+			}
 		}
 
 		if (position < data.size()) {
@@ -76,6 +90,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
 				holder.iv.setImageDrawable(card.getImageDrawable());
 			}
 		}
+		
 		return row;
 	}
 
@@ -86,6 +101,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
 		TextView tv_source;
 		TextView tv_time;
 		TextView view_tv;
+		LinearLayout progressBar;
 	}
 
 }

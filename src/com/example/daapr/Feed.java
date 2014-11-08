@@ -26,6 +26,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -163,8 +164,7 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 	}
 	
 	/**
-	 * Background thread that sends an Http POST request to append new feed
-	 * items.
+	 * Background thread that sends an Http POST request to append new feed items.
 	 */
 	private class FeedTask extends AsyncTask<Object, Void, Object[]> {
 		@SuppressWarnings("unchecked")
@@ -263,9 +263,14 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 		// Adapt cards to views to be put in the listview
 		if (feed_listview.getAdapter() == null) {
 			adapter = new CardAdapter(context, R.layout.listview_card, card_data);
+			
+			//initialize listview
 			feed_listview.setAdapter(adapter);
 			feed_listview.setOnScrollListener(this);
 			feed_listview.setOnItemClickListener(this);
+			
+			//add the loading button
+			feed_listview.addFooterView(new Button(this));
 		} else {
 			synchronized(this) {
 				adapter.getData().addAll(card_data);

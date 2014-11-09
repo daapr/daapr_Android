@@ -78,7 +78,7 @@
         </RelativeLayout>
     </LinearLayout>
     
-     <LinearLayout
+    <LinearLayout
         android:id="@+id/linlaHeaderProgress_card"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

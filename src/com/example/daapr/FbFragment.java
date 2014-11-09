@@ -110,7 +110,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 //						String email = "test@example.com";
 //						String password = "testing123";
 				    	// Replace with below code when using the actual user's inputs
-				    	String url = "https://orangeseven7.com/rest_sign_in?";
+				    	String url = "https://www.orangeseven7.com/rest_sign_in?";
 				    	String email = email_et.getText().toString();
 				    	String password = password_et.getText().toString();
 				    	

@@ -39,10 +39,6 @@ public class HTTP {
 	        }
 	    	HttpEntity entity = new UrlEncodedFormEntity(nameValuePairs, "utf-8");
 	        httppost.setEntity(entity);
-
-	        //For testing purposes only
-	    	String content = EntityUtils.toString(entity);
-	    	System.out.println("URL is: " + path + content);
 	        
 	    	// Execute HTTP Post Request
 	    	response = httpclient.execute(httppost);
@@ -78,23 +74,20 @@ public class HTTP {
 	public static Object[] append_feed(String path, List<BasicNameValuePair> urlParams) {
 		HttpResponse response = null;
 	    HttpClient httpclient = new DefaultHttpClient();
-	    HttpPost httppost = null;
-	    httppost = new HttpPost(path);
+	    HttpPost httppost = new HttpPost(path);
 	    try {
 	    	// Add the data
 	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 	        for (BasicNameValuePair data : urlParams) {
 	        	nameValuePairs.add(data);
 	        }
+	        
 	    	HttpEntity entity = new UrlEncodedFormEntity(nameValuePairs, "utf-8");
 	        httppost.setEntity(entity);
-	        
-	        // For testing purposes only
-	    	String content = EntityUtils.toString(entity);
-	    	System.out.println("URL is: " + path + content);
 
 	        // Execute HTTP Post Request
 	    	response = httpclient.execute(httppost);
+	    	
 	    	// Code from http://stackoverflow.com/questions/2845599/how-do-i-parse-json-from-a-java-httpresponse
 	    	// Convert HTTP response into JSONArray
 	    	BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
@@ -132,7 +125,6 @@ public class HTTP {
 	        
 	    } catch (ClientProtocolException e) {
 	    	e.printStackTrace();
-	    	System.out.println("http code is " + response.getStatusLine().toString());
 	    	return null;
 	    } catch (IOException e) {
 	    	e.printStackTrace();

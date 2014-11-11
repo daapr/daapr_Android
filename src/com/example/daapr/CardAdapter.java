@@ -49,8 +49,7 @@ public class CardAdapter extends ArrayAdapter<Card> {
 		View row = convertView;
 		if (row == null) {
 			// inflate the layout
-			LayoutInflater inflater = ((Activity) context)
-					.getLayoutInflater();
+			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			row = inflater.inflate(layoutResourceId, parent, false);
 			// set the card holder
 			holder = new CardHolder();

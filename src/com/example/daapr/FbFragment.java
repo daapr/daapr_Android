@@ -1,5 +1,4 @@
 package com.example.daapr;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,6 +43,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 	private String api_key; // attribute needed for sign in (regular and FB)
 	private SharedPreferences sharedPref; // tracks app's session state
 	private Button btn;
+	String root_url = "https://www.orangeseven7.com";
 	
 	private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
 	    @Override
@@ -107,16 +107,10 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 			    @Override
 			    public void onClick(View v) {
 				    try {
-//						String email = "test@example.com";
-//						String password = "testing123";
-				    	// Replace with below code when using the actual user's inputs
-				    	String url = "https://www.orangeseven7.com/rest_sign_in?";
+				    	String url = root_url + "/rest_sign_in?";
 				    	String email = email_et.getText().toString();
 				    	String password = password_et.getText().toString();
-				    	
-				    	System.out.println("password is " + password);
-				    	System.out.println("email is " + email);
-				    	
+				 
 				    	if (email.equals("")) {
 				    		Toast toast = Toast.makeText(getActivity(), "You must enter a valid email.", Toast.LENGTH_SHORT);
 				    		toast.show();
@@ -142,7 +136,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 			newAccountLink.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					String url = "https://www.daapr.com";
+					String url = root_url;
 					Intent i = new Intent(Intent.ACTION_VIEW);
 					i.setData(Uri.parse(url));
 					startActivity(i);
@@ -165,7 +159,6 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 	/** Currently unused. Should return the user's Facebook profile picture as a bitmap given
 	 *  his or her userID. 
 	 * @throws IOException  */
-//	Bitmap bitmap = getFacebookProfilePicture(userId);
 	public static Bitmap getFacebookProfilePicture(String userID) throws IOException {
 	    URL imageURL = new URL("https://graph.facebook.com/" + userID + "/picture?type=large");
 	    Bitmap bitmap = BitmapFactory.decodeStream(imageURL.openConnection().getInputStream());
@@ -182,7 +175,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 						buildUserInfo(user);
 						
 		                // Call rest_facebook_login
-		                String url = "https://orangeseven7.com/rest_facebook_login?";
+		                String url = root_url + "/rest_facebook_login?";
 						List<BasicNameValuePair> urlParams = new ArrayList<BasicNameValuePair>(2);
 				        urlParams.add(new BasicNameValuePair("email", fb_email));
 				        urlParams.add(new BasicNameValuePair("first_name", first_name));
@@ -211,6 +204,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 			Intent feed = new Intent(getActivity(), Feed.class);
 			feed.putExtra("API_KEY", api_key);
 			startActivity(feed);
+			
 		}
 	}
 	
@@ -243,7 +237,6 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 
 	@Override
 	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-		// TODO Auto-generated method stub
 		if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
 			//automatically presses the sign in button when "done" or "return" is clicked on the keyboard.
 			btn.performClick();

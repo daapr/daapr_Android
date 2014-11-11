@@ -13,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -29,7 +30,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.Request;
@@ -39,17 +40,17 @@ import com.facebook.model.GraphUser;
 
 
 public class Feed extends ActionBarActivity implements OnScrollListener, OnItemClickListener {
-	String api_key;
-	int current_length;
-	String last_time_synchronized;
-	Context context;
+	private String api_key;
+	private int current_length;
+	private String last_time_synchronized;
+	private Context context;
 	private ListView feed_listview;
-	CardAdapter adapter;
+	private CardAdapter adapter;
 	private int taskCounter;
 	private boolean feedLoading;
 	private ArrayList<Card> loadingData;
-	String url = "https://orangeseven7.com/rest_append_feed?";
-	LinearLayout linlaHeaderProgress;
+	private String url = "https://www.orangeseven7.com/rest_append_feed?";
+	private LinearLayout linlaHeaderProgress;
 
 	@SuppressLint({ "SimpleDateFormat", "NewApi" })
 	@Override
@@ -95,6 +96,7 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 		updateLastTimeSynch();
 		finish();
 		startActivity(getIntent());
+		this.overridePendingTransition(0, 0);
 	}
 
 	/** Sign out of the app by removing the api_key from shared preferences. */
@@ -104,14 +106,11 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 		// check if valid Facebook session and if the current fb user id == daapr fb id
 		Session session = Session.getActiveSession();
 	    if (session != null && session.isOpened()) {
-	    	System.out.println("!!!VALID FB SESSION");
 			Request.newMeRequest(Session.getActiveSession(), new Request.GraphUserCallback() {
 				@Override
 				public void onCompleted(GraphUser fbUser, Response response) {
 					String currentUserFbId = sharedPref.getString("fb_id", null);
-					System.out.println("!!!DAAPR FB USER ID = " + currentUserFbId);
 					if (currentUserFbId != null && fbUser.getId().equals(currentUserFbId)) {
-						System.out.println("!!!CURRENT FB USER ID " + fbUser.getId());
 						Session.getActiveSession().closeAndClearTokenInformation();
 						SharedPreferences.Editor editor = sharedPref.edit();
 						editor.remove("fb_id");
@@ -121,10 +120,6 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 				}
 			}).executeAsync();
 	    } else {
-	    	System.out.println("!!!FB SESSION INVALID :(");
-	    	if (session == null) { System.out.println("session is null"); }
-	    	else if (!session.isOpened()) { System.out.println("session is not open"); }
-	    	else if (session.isClosed()) { System.out.println("session is closed"); }
 			signOutOfDaapr(sharedPref);
 	    }
 	}
@@ -192,7 +187,6 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 			boolean loadMore = firstVisible + visibleCount >= totalCount - 5;
 			if (loadMore) {
 				current_length += 20; // TODO: Most of the time will be 20, but should be length that Connor returns
-				adapter.setCount(adapter.getCount() + 20); // TODO: Same as above comment
 				updateParams(current_length, last_time_synchronized);
 			}
 		}
@@ -216,7 +210,9 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
-			linlaHeaderProgress.setVisibility(View.VISIBLE);
+			if (current_length < 20) {
+				linlaHeaderProgress.setVisibility(View.VISIBLE);
+			}
 		}
 
 		protected ArrayList<Object> doInBackground(Card... params) {
@@ -229,7 +225,7 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 				return tuple;
 			} catch (Exception e) {
 				e.printStackTrace();
-				Drawable d = getResources().getDrawable(R.drawable.appicon);
+				Drawable d = getResources().getDrawable(R.drawable.default_icon);
 				ArrayList<Object> tuple = new ArrayList<Object>();
 				tuple.add(d);
 				tuple.add(params[0]);
@@ -247,12 +243,10 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 				
 				synchronized(this) {
 					taskCounter++;
+					loadingData.addAll(cardArray);
 					if (taskCounter > 19) {
-						loadingData.addAll(cardArray);
 						feedLoading = false;
 						configureAdapter(loadingData);
-					} else {
-						loadingData.addAll(cardArray);
 					}
 				}
 			}
@@ -269,11 +263,15 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 			feed_listview.setOnScrollListener(this);
 			feed_listview.setOnItemClickListener(this);
 			
-			//add the loading button
-			feed_listview.addFooterView(new Button(this));
+			//add the loading sign
+			ProgressBar loadMore = new ProgressBar(this);
+//			loadMore.setBackgroundColor(Color.parseColor("#E0E0E0"));
+			feed_listview.addFooterView(loadMore);
+			
 		} else {
 			synchronized(this) {
 				adapter.getData().addAll(card_data);
+				adapter.setCount(adapter.getCount() + 20);
 				adapter.notifyDataSetChanged();
 			}
 		}

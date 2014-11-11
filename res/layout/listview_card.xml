@@ -10,15 +10,15 @@
 
     <ImageView
         android:id="@+id/card_image"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:contentDescription="@string/test_card_name"
         android:scaleType="centerCrop"
         android:src="@drawable/charlie" />
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="130dp "
+        android:layout_height="120dp "
         android:background="#FFFFFF"
         android:orientation="vertical"
         android:paddingBottom="8sp"

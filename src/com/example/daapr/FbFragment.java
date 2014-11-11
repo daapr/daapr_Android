@@ -1,5 +1,4 @@
 package com.example.daapr;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 	private String api_key; // attribute needed for sign in (regular and FB)
 	private SharedPreferences sharedPref; // tracks app's session state
 	private Button btn;
-	String root_url = "https://orangeseven7.com";
+	String root_url = "https://www.orangeseven7.com";
 	
 	private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
 	    @Override
@@ -111,10 +110,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 				    	String url = root_url + "/rest_sign_in?";
 				    	String email = email_et.getText().toString();
 				    	String password = password_et.getText().toString();
-				    	
-				    	System.out.println("password is " + password);
-				    	System.out.println("email is " + email);
-				    	
+				 
 				    	if (email.equals("")) {
 				    		Toast toast = Toast.makeText(getActivity(), "You must enter a valid email.", Toast.LENGTH_SHORT);
 				    		toast.show();
@@ -208,6 +204,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 			Intent feed = new Intent(getActivity(), Feed.class);
 			feed.putExtra("API_KEY", api_key);
 			startActivity(feed);
+			
 		}
 	}
 	

@@ -43,7 +43,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 	private String api_key; // attribute needed for sign in (regular and FB)
 	private SharedPreferences sharedPref; // tracks app's session state
 	private Button btn;
-	String root_url = "https://www.orangeseven7.com";
+	private String root_url = "https://www.orangeseven7.com";
 	
 	private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
 	    @Override
@@ -92,8 +92,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	    // Get a handle to shared preferences
-	    sharedPref = getActivity().getSharedPreferences(
-		        "com.example.daapr.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+	    sharedPref = getActivity().getSharedPreferences("com.example.daapr.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
 		// Read from shared preferences
 		String session_api_key = sharedPref.getString("api_key", null);
 		if (session_api_key == null) {
@@ -183,10 +182,13 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 				    	urlParams.add(new BasicNameValuePair("image", fb_image));
 				    	urlParams.add(new BasicNameValuePair("facebook_id", fb_id));
 			    		new SignInTask().execute(url, urlParams);
-		            }
+					}
 				}
             }).executeAsync();
+	    } else {
+	    	Toast.makeText(getActivity(), "Oops. Unable to sign in to daapr using your Facebook.", Toast.LENGTH_SHORT).show();
 	    }
+		
 	}
 	
 	private void buildUserInfo(GraphUser user) {
@@ -215,6 +217,7 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 	    }
 
 	    protected void onPostExecute(Object[] result) {
+	    	//result[0] == true means the login was successful
 	        if ((Boolean) result[0]) {
 	        	JSONObject user = (JSONObject) result[1];
 	        	try {
@@ -229,8 +232,8 @@ public class FbFragment extends Fragment implements OnEditorActionListener {
 				editor.commit();
 	        	signIn();
 	        } else {
-	        	Toast toast = Toast.makeText(getActivity(), "Invalid email or password!", Toast.LENGTH_SHORT);
-	        	toast.show();
+	        	//login was unsuccessful for some reason
+	        	Toast.makeText(getActivity(), "Invalid email or password!", Toast.LENGTH_SHORT).show();
 	        }
 	    }
 	}

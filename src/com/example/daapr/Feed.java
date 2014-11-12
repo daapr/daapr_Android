@@ -101,8 +101,7 @@ public class Feed extends ActionBarActivity implements OnScrollListener, OnItemC
 
 	/** Sign out of the app by removing the api_key from shared preferences. */
 	private void signOut() {
-		final SharedPreferences sharedPref = getSharedPreferences(
-				"com.example.daapr.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+		final SharedPreferences sharedPref = getSharedPreferences("com.example.daapr.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
 		// check if valid Facebook session and if the current fb user id == daapr fb id
 		Session session = Session.getActiveSession();
 	    if (session != null && session.isOpened()) {
